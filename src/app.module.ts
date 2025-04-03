@@ -18,7 +18,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
     password: 'postgres',
     database: 'stockea3',
     entities: [__dirname+'/**/*.entity.{ts,js}'],
-    synchronize: true //SE USA SOLO EN DESARROLLO
+    synchronize: true, //SE USA SOLO EN DESARROLLO
+    dropSchema: true
   }),ProductosModule, LotesModule, ProveedoresModule, CategoriasModule, DetallesMovimientoModule, MovimientoModule],
   controllers: [AppController],
   providers: [AppService],

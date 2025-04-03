@@ -1,6 +1,6 @@
 import { Entity, PrimaryGeneratedColumn, Column, Unique } from 'typeorm';
 
-@Entity('productos')
+@Entity('producto')
 @Unique(['codigo']) // El código debe ser único
 export class Producto {
   @PrimaryGeneratedColumn()
