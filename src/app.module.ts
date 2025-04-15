@@ -8,6 +8,7 @@ import { CategoriasModule } from './categorias/categorias.module';
 import { DetallesMovimientoModule } from './detalles-movimiento/detalles-movimiento.module';
 import { MovimientoModule } from './movimiento/movimiento.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { MarcaModule } from './marca/marca.module';
 
 @Module({
   imports: [TypeOrmModule .forRoot({
@@ -20,7 +21,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
     entities: [__dirname+'/**/*.entity.{ts,js}'],
     synchronize: true, //SE USA SOLO EN DESARROLLO
     dropSchema: true
-  }),ProductosModule, LotesModule, ProveedoresModule, CategoriasModule, DetallesMovimientoModule, MovimientoModule],
+  }),ProductosModule, LotesModule, ProveedoresModule, CategoriasModule, DetallesMovimientoModule, MovimientoModule, MarcaModule],
   controllers: [AppController],
   providers: [AppService],
 })

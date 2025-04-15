@@ -1,9 +1,9 @@
 import { Column, Entity, PrimaryGeneratedColumn, Unique } from "typeorm";
 
-@Entity('categoria')
+@Entity('marca')
 @Unique(['id'])
 
-export class Categoria {
+export class Marca {
 
     @PrimaryGeneratedColumn()
     id: number;
@@ -13,8 +13,5 @@ export class Categoria {
     
     @Column({ type: 'text'})
     descripcion: string;
-    
-    @Column({ type: 'text', nullable: true })
-    imagen: string;
 }
 
