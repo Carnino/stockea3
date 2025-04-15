@@ -1,8 +1,9 @@
 import { Module } from '@nestjs/common';
 import { MarcaService } from './marca.service';
-import { MarcaGateway } from './marca.gateway';
+import { MarcaController } from './marca.controller';
 
 @Module({
-  providers: [MarcaGateway, MarcaService],
-})
+  controllers: [MarcaController],
+  providers: [MarcaService],
+  })
 export class MarcaModule {}

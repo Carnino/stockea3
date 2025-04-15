@@ -4,7 +4,7 @@ import { CreateMarcaDto } from './dto/create-marca.dto';
 import { UpdateMarcaDto } from './dto/update-marca.dto';
 
 @Controller('Marcas')
-export class MarcasController {
+export class MarcaController {
   constructor(private readonly MarcaService: MarcaService) {}
 
   @Post()
