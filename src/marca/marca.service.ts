@@ -19,8 +19,8 @@ export class MarcaService {
     return await this.marcaRepository.save(marca);
   }
 
-  findAll() {
-    return `This action returns all marca`;
+  async findAll() {
+    return await this.marcaRepository.find();
   }
 
   findOne(id: number) {

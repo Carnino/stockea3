@@ -3,11 +3,11 @@ import { MarcaService } from './marca.service';
 import { CreateMarcaDto } from './dto/create-marca.dto';
 import { UpdateMarcaDto } from './dto/update-marca.dto';
 
-@Controller('Marcas')
+@Controller('marca')
 export class MarcaController {
   constructor(private readonly MarcaService: MarcaService) {}
 
-  @Post('/nuevaMarca')
+  @Post()
   create(@Body() createMarcaDto: CreateMarcaDto) {
     return this.MarcaService.create(createMarcaDto);
   }
