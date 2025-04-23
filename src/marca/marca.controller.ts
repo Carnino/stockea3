@@ -7,7 +7,7 @@ import { UpdateMarcaDto } from './dto/update-marca.dto';
 export class MarcaController {
   constructor(private readonly MarcaService: MarcaService) {}
 
-  @Post()
+  @Post('/nuevaMarca')
   create(@Body() createMarcaDto: CreateMarcaDto) {
     return this.MarcaService.create(createMarcaDto);
   }
@@ -16,6 +16,7 @@ export class MarcaController {
   findAll() {
     return this.MarcaService.findAll();
   }
+
 
   @Get(':id')
   findOne(@Param('id') id: string) {

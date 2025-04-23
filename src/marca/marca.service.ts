@@ -1,11 +1,22 @@
 import { Injectable } from '@nestjs/common';
 import { CreateMarcaDto } from './dto/create-marca.dto';
 import { UpdateMarcaDto } from './dto/update-marca.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { Marca } from './entities/marca.entity';
 
 @Injectable()
 export class MarcaService {
-  create(createMarcaDto: CreateMarcaDto) {
-    return 'This action adds a new marca';
+
+  constructor(
+    @InjectRepository(Marca) 
+    private marcaRepository: Repository<Marca>,
+  ) {}
+
+  //Funcion crear marca
+  async create(createMarcaDto: CreateMarcaDto): Promise<Marca> {
+    const marca = this.marcaRepository.create(createMarcaDto);
+    return await this.marcaRepository.save(marca);
   }
 
   findAll() {
