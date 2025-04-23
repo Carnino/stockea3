@@ -4,7 +4,7 @@ import { UpdateMarcaDto } from './dto/update-marca.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Marca } from './entities/marca.entity';
-import { HttpStatusCode } from 'axios';
+
 
 @Injectable()
 export class MarcaService {
