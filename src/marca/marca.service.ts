@@ -1,9 +1,10 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateMarcaDto } from './dto/create-marca.dto';
 import { UpdateMarcaDto } from './dto/update-marca.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Marca } from './entities/marca.entity';
+import { HttpStatusCode } from 'axios';
 
 @Injectable()
 export class MarcaService {
@@ -23,8 +24,18 @@ export class MarcaService {
     return await this.marcaRepository.find();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} marca`;
+  async findOne(id: number) {
+    const marca = await this.marcaRepository.findOne({
+      where: {
+        id: id, 
+      },
+    });
+
+    if(!marca){
+      throw new NotFoundException(`La marca con ID ${id} no se encontró`);
+    } 
+
+    return marca;
   }
 
   update(id: number, updateMarcaDto: UpdateMarcaDto) {

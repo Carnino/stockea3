@@ -1,7 +1,8 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe, NotFoundException } from '@nestjs/common';
 import { MarcaService } from './marca.service';
 import { CreateMarcaDto } from './dto/create-marca.dto';
 import { UpdateMarcaDto } from './dto/update-marca.dto';
+import { Marca } from './entities/marca.entity';
 
 @Controller('marca')
 export class MarcaController {
@@ -19,8 +20,16 @@ export class MarcaController {
 
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.MarcaService.findOne(+id);
+  async findOne(@Param('id', ParseIntPipe) id: number): Promise<Marca> {
+    try {
+      return await this.MarcaService.findOne(id);
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw error; // Re-lanza la excepción para que NestJS la maneje
+      }
+      // Manejar otros posibles errores aquí
+      throw new Error('Ocurrió un error al buscar la marca');
+    }
   }
 
   @Patch(':id')
