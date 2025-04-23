@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException} from '@nestjs/common';
 import { CreateCategoriaDto } from './dto/create-categoria.dto';
 import { UpdateCategoriaDto } from './dto/update-categoria.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -20,11 +20,11 @@ export class CategoriasService {
       return await this.categoriaRepository.save(Categoria);
     }
 
-  async findAll() {
+  async findAll():Promise<Categoria[]> {
     return await this.categoriaRepository.find();
   }
 
-  async findOne(id: number) {
+  async findOne(id: number): Promise<Categoria> {
       const categoria = await this.categoriaRepository.findOne({
         where: {
           id: id, 
@@ -38,11 +38,17 @@ export class CategoriasService {
       return categoria;
     }
 
-  update(id: number, updateCategoriaDto: UpdateCategoriaDto) {
-    return `This action updates a #${id} categoria`;
+  async update(id: number, updateCategoriaDto: UpdateCategoriaDto): Promise<Categoria> {
+    const categoria = await this.findOne(id)
+
+    const updatedCategoria = this.categoriaRepository.merge(categoria, updateCategoriaDto);
+
+    return await this.categoriaRepository.save(updatedCategoria);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} categoria`;
+  async remove(id: number) : Promise<void> {
+    const categoria = await this.findOne(id)
+
+    const removeCategoria = this.categoriaRepository.remove(categoria)
   }
 }
