@@ -1,7 +1,7 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, HttpStatus, HttpException, ParseIntPipe, NotFoundException } from '@nestjs/common';
 import { ProveedorService } from './proveedor.service';
 import { CreateProveedorDto } from './dto/create-proveedor.dto';
-import { UpdateProveedorDto } from './dto/update-proveedor.dto';
+import{UpdateProveedorDto} from './dto/update-proveedor.dto';
 import {Proveedor} from './entities/proveedor.entity';
 import { NotFoundError } from 'rxjs';
 

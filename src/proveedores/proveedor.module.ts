@@ -12,3 +12,4 @@ import { Proveedor } from './entities/proveedor.entity';
   providers: [ProveedorService],
 })
 export class ProveedorModule {}
+
