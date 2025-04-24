@@ -50,6 +50,8 @@ export class ProductosController {
     }
   }
 
+
+  // Por el momento no se usa. En caso de usarlo hay que arreglar la parte de modificar una foreign key
   @Patch(':id')
   update(@Param('id', ParseIntPipe) id: number, @Body() updateProductoDto: UpdateProductoDto): Promise<Producto>{
     try {

@@ -18,12 +18,6 @@ export class Producto {
   @Column({ type: 'text', nullable: true })
   descripcion: string;
 
-  @Column({ type: 'decimal', precision: 10, scale: 2 })
-  precioIngreso: number;
-
-  @Column({ type: 'decimal', precision: 10, scale: 2 })
-  precioEgreso: number;
-
   // Si categoría es una entidad (clave foránea):
   @ManyToOne(() => Categoria)
   @JoinColumn({ name: 'categoria_id' })
