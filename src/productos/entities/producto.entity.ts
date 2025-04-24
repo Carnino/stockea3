@@ -1,5 +1,6 @@
 import { Categoria } from 'src/categorias/entities/categoria.entity';
 import { Marca } from 'src/marca/entities/marca.entity';
+import { Proveedor } from 'src/proveedores/entities/proveedor.entity';
 import { Entity, PrimaryGeneratedColumn, Column, Unique, ManyToOne, JoinColumn } from 'typeorm';
 
 @Entity('producto')
@@ -17,12 +18,6 @@ export class Producto {
   @Column({ type: 'text', nullable: true })
   descripcion: string;
 
-  @Column({ type: 'decimal', precision: 10, scale: 2 })
-  precioIngreso: number;
-
-  @Column({ type: 'decimal', precision: 10, scale: 2 })
-  precioEgreso: number;
-
   // Si categoría es una entidad (clave foránea):
   @ManyToOne(() => Categoria)
   @JoinColumn({ name: 'categoria_id' })
@@ -32,5 +27,9 @@ export class Producto {
   @ManyToOne(() => Marca)
   @JoinColumn({ name: 'marca_id' })
   marca: Marca;
+
+  @ManyToOne(() => Proveedor)
+  @JoinColumn({ name: 'proveedor_id' })
+  proveedor: Proveedor;
   
 }
