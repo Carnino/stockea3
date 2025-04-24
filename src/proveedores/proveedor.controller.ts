@@ -1,18 +1,18 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, HttpStatus, HttpException, ParseIntPipe, NotFoundException } from '@nestjs/common';
-import { ProveedoresService } from './proveedores.service';
-import { CreateProveedoreDto } from './dto/create-proveedore.dto';
-import { UpdateProveedoreDto } from './dto/update-proveedore.dto';
-import { Proveedores } from './entities/proveedores.entity';
+import { ProveedorService } from './proveedor.service';
+import { CreateProveedorDto } from './dto/create-proveedor.dto';
+import { UpdateProveedorDto } from './dto/update-proveedor.dto';
+import {Proveedor} from './entities/proveedor.entity';
 import { NotFoundError } from 'rxjs';
 
 @Controller('proveedor')
-export class ProveedoresController {
-  constructor(private readonly proveedoresService: ProveedoresService) {}
+export class ProveedorController {
+  constructor(private readonly proveedorService: ProveedorService) {}
 
   @Post()
-  create(@Body() createProveedoreDto: CreateProveedoreDto): Promise<Proveedores> {
+  create(@Body() createProveedorDto: CreateProveedorDto): Promise<Proveedor> {
    try {
-         return this.proveedoresService.create(createProveedoreDto);
+         return this.proveedorService.create(createProveedorDto);
        } catch (e) {
          console.error('Error al crear el Proveedor:', e)
            throw new HttpException(
@@ -25,7 +25,7 @@ export class ProveedoresController {
   @Get()
   findAll(){
     try {
-      return this.proveedoresService.findAll();
+      return this.proveedorService.findAll();
     } catch (e) {
       console.error('Error al buscar los Proveedores:', e)
         throw new HttpException(
@@ -36,9 +36,9 @@ export class ProveedoresController {
   }
 
   @Get(':id')
-  async findOne(@Param('id', ParseIntPipe) id: number) : Promise<Proveedores> {
+  async findOne(@Param('id', ParseIntPipe) id: number) : Promise<Proveedor> {
      try {
-      return await this.proveedoresService.findOne(id);
+      return await this.proveedorService.findOne(id);
     } catch (e) {
       if (e instanceof NotFoundException) {
         throw e; // Re-lanza la excepción para que NestJS la maneje
@@ -53,9 +53,9 @@ export class ProveedoresController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: number, @Body() updateProveedoreDto: UpdateProveedoreDto): Promise<Proveedores> {
+  update(@Param('id') id: number, @Body() updateProveedorDto: UpdateProveedorDto): Promise<Proveedor> {
     try {
-      return this.proveedoresService.update(id, updateProveedoreDto);
+      return this.proveedorService.update(id, updateProveedorDto);
     } catch (e) {
       if (e instanceof NotFoundError){
         throw e
@@ -72,7 +72,7 @@ export class ProveedoresController {
   @Delete(':id')
   async remove(@Param('id') id: number) : Promise<void> {
     try {
-      await this.proveedoresService.remove(id);
+      await this.proveedorService.remove(id);
     } catch (e) {
       if(e instanceof NotFoundException){
         throw e;
