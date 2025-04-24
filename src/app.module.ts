@@ -2,13 +2,12 @@ import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ProductosModule } from './productos/productos.module';
-import { LotesModule } from './lotes/lotes.module';
 import { ProveedorModule } from './proveedores/proveedor.module';
 import { CategoriasModule } from './categorias/categorias.module';
-import { DetallesMovimientoModule } from './detalles-movimiento/detalles-movimiento.module';
-import { MovimientoModule } from './movimiento/movimiento.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { MarcaModule } from './marca/marca.module';
+import { ProductosEnStockModule } from './productos-en-stock/productos-en-stock.module';
+import { MovimientoSalidaModule } from './movimiento-salida/movimiento-salida.module';
 
 @Module({
   imports: [TypeOrmModule .forRoot({
@@ -21,7 +20,7 @@ import { MarcaModule } from './marca/marca.module';
     entities: [__dirname+'/**/*.entity.{ts,js}'],
     synchronize: true, //SE USA SOLO EN DESARROLLO
     dropSchema: true
-  }),ProductosModule, LotesModule, ProveedorModule, CategoriasModule, DetallesMovimientoModule, MovimientoModule, MarcaModule],
+  }),ProductosModule, ProveedorModule, CategoriasModule, MarcaModule, ProductosEnStockModule, MovimientoSalidaModule],
   controllers: [AppController],
   providers: [AppService],
 })
