@@ -12,9 +12,5 @@ export class CreateProductoDto {
   @IsOptional()
   @IsString()
   descripcion?: string;
-
-  @IsNotEmpty()
-  @IsNumber()
-  @Min(0.01)
-  precio: number; */
+ */
 }
