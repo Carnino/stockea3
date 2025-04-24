@@ -1,26 +1,54 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException} from '@nestjs/common';
 import { CreateCategoriaDto } from './dto/create-categoria.dto';
 import { UpdateCategoriaDto } from './dto/update-categoria.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { Categoria } from './entities/categoria.entity';
+
 
 @Injectable()
 export class CategoriasService {
-  create(createCategoriaDto: CreateCategoriaDto) {
-    return 'This action adds a new categoria';
+  
+  constructor(
+    @InjectRepository(Categoria)
+    private categoriaRepository : Repository<Categoria>
+  ){}
+  
+
+  async create(createCategoriaDto: CreateCategoriaDto): Promise<Categoria> {
+      const Categoria = this.categoriaRepository.create(createCategoriaDto);
+      return await this.categoriaRepository.save(Categoria);
+    }
+
+  async findAll():Promise<Categoria[]> {
+    return await this.categoriaRepository.find();
   }
 
-  findAll() {
-    return `This action returns all categorias`;
+  async findOne(id: number): Promise<Categoria> {
+      const categoria = await this.categoriaRepository.findOne({
+        where: {
+          id: id, 
+        },
+      });
+  
+      if(!categoria){
+        throw new NotFoundException(`La categoria con ID ${id} no se encontró`);
+      } 
+  
+      return categoria;
+    }
+
+  async update(id: number, updateCategoriaDto: UpdateCategoriaDto): Promise<Categoria> {
+    const categoria = await this.findOne(id)
+
+    const updatedCategoria = this.categoriaRepository.merge(categoria, updateCategoriaDto);
+
+    return await this.categoriaRepository.save(updatedCategoria);
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} categoria`;
-  }
+  async remove(id: number) : Promise<void> {
+    const categoria = await this.findOne(id)
 
-  update(id: number, updateCategoriaDto: UpdateCategoriaDto) {
-    return `This action updates a #${id} categoria`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} categoria`;
+    const removeCategoria = this.categoriaRepository.remove(categoria)
   }
 }
