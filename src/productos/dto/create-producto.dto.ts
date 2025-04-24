@@ -1,7 +1,7 @@
 import { IsNotEmpty, IsString, IsNumber, Min, IsOptional } from 'class-validator';
 
 export class CreateProductoDto {
-  @IsNotEmpty()
+/*   @IsNotEmpty()
   @IsString()
   nombre: string;
 
@@ -16,5 +16,5 @@ export class CreateProductoDto {
   @IsNotEmpty()
   @IsNumber()
   @Min(0.01)
-  precio: number;
+  precio: number; */
 }
