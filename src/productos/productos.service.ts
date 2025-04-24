@@ -25,7 +25,7 @@ export class ProductosService {
 
   async findOne(id: number): Promise<Producto> {
     const producto = await this.productoRepository.findOne({ 
-      relations: ['categoria', 'marca'],
+      relations: ['categoria', 'marca','proveedor'],
       where: { 
         id:id
       } 

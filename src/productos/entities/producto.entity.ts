@@ -1,5 +1,6 @@
 import { Categoria } from 'src/categorias/entities/categoria.entity';
 import { Marca } from 'src/marca/entities/marca.entity';
+import { Proveedor } from 'src/proveedores/entities/proveedor.entity';
 import { Entity, PrimaryGeneratedColumn, Column, Unique, ManyToOne, JoinColumn } from 'typeorm';
 
 @Entity('producto')
@@ -32,5 +33,9 @@ export class Producto {
   @ManyToOne(() => Marca)
   @JoinColumn({ name: 'marca_id' })
   marca: Marca;
+
+  @ManyToOne(() => Proveedor)
+  @JoinColumn({ name: 'proveedor_id' })
+  proveedor: Proveedor;
   
 }
