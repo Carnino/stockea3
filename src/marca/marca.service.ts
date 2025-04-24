@@ -20,11 +20,11 @@ export class MarcaService {
     return await this.marcaRepository.save(marca);
   }
 
-  async findAll() {
+  async findAll(): Promise<Marca[]> {
     return await this.marcaRepository.find();
   }
 
-  async findOne(id: number) {
+  async findOne(id: number): Promise<Marca> {
     const marca = await this.marcaRepository.findOne({
       where: {
         id: id, 
@@ -38,11 +38,18 @@ export class MarcaService {
     return marca;
   }
 
-  update(id: number, updateMarcaDto: UpdateMarcaDto) {
-    return `This action updates a #${id} marca`;
+  async update(id: number, updateMarcaDto: UpdateMarcaDto): Promise<Marca> {
+    const marca = await this.findOne(id)
+
+    const updatedMarca = this.marcaRepository.merge(marca, updateMarcaDto);
+
+    return await this.marcaRepository.save(updatedMarca);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} marca`;
+  async remove(id: number): Promise<void> {
+    const result = await this.marcaRepository.delete(id);
+    if (result.affected === 0) {
+        throw new NotFoundException(`La marca con ID ${id} no se encontró`);
+    }
   }
 }
