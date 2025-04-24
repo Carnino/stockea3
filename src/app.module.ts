@@ -20,7 +20,7 @@ import { MarcaModule } from './marca/marca.module';
     database: 'stockea3',
     entities: [__dirname+'/**/*.entity.{ts,js}'],
     synchronize: true, //SE USA SOLO EN DESARROLLO
-    dropSchema: false
+    dropSchema: true
   }),ProductosModule, LotesModule, ProveedoresModule, CategoriasModule, DetallesMovimientoModule, MovimientoModule, MarcaModule],
   controllers: [AppController],
   providers: [AppService],

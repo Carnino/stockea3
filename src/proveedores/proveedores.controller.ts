@@ -5,7 +5,7 @@ import { UpdateProveedoreDto } from './dto/update-proveedore.dto';
 import { Proveedores } from './entities/proveedores.entity';
 import { NotFoundError } from 'rxjs';
 
-@Controller('proveedores')
+@Controller('proveedor')
 export class ProveedoresController {
   constructor(private readonly proveedoresService: ProveedoresService) {}
 
