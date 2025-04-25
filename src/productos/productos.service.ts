@@ -1,6 +1,6 @@
-import { HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
+import { ConflictException, HttpException, HttpStatus, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { QueryFailedError, Repository } from 'typeorm';
+import { EntityNotFoundError, QueryFailedError, Repository } from 'typeorm';
 import { Producto } from './entities/producto.entity';
 import { CreateProductoDto } from './dto/create-producto.dto';
 import { UpdateProductoDto } from './dto/update-producto.dto';
@@ -37,20 +37,24 @@ export class ProductosService {
   }
 
   async update(id: number, updateProductoDto: UpdateProductoDto): Promise<Producto> {
+    try {
     const producto = await this.findOne(id); 
 
     const updatedProducto =  this.productoRepository.merge(producto, updateProductoDto);
 
-    try {
-      return await this.productoRepository.save(updatedProducto);
-    } catch (error) {
-      if (error instanceof QueryFailedError && error.driverError.code === '23503') {
-        throw new NotFoundException(
-          'No se pudo actualizar el producto debido a un error con las claves foráneas proporcionadas. Verifica que los IDs de categoría y marca sean válidos.',
-        );
+    return await this.productoRepository.save(updatedProducto);
+
+    } catch (e) {
+      // Loguear el error para depuración
+      console.error('Error al actualizar el producto:', e);
+
+      // Ejemplo de manejo de error de base de datos
+      if (e instanceof QueryFailedError && e.driverError?.code === '23503') { // Código foreign_key_violation en PostgreSQL
+        console.log(e)
+        throw new ConflictException('Marca, categoria o proveedor no es correcta');
+        
       }
-      // Si es otro error, lanza un Internal Server Error
-      throw new HttpException('Error al actualizar el producto', HttpStatus.INTERNAL_SERVER_ERROR);
+      throw new InternalServerErrorException('Error interno al intentar actualizar el producto.');
     }
     
   }
