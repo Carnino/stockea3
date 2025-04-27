@@ -52,4 +52,27 @@ export class MarcaService {
         throw new NotFoundException(`La marca con ID ${id} no se encontró`);
     }
   }
+
+  async softDelete(id: number): Promise<void> {
+    const result = await this.marcaRepository.softDelete(id)
+
+    if(result.affected === 0){
+      throw new NotFoundException(`La marca con ID ${id} no se encontró`)
+    }
+  }
+
+  async restore(id: number): Promise<void>{
+    const result = await this.marcaRepository.restore(id)
+
+    if(result.affected === 0){
+      throw new NotFoundException(`La marca con ID ${id} no se encontró`)
+    }
+
+  }
+
+  async findSoftDeleted(): Promise<Marca[]> {
+    return await this.marcaRepository.find({ withDeleted: true });
+  }
+
+  
 }
