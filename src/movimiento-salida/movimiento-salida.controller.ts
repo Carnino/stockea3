@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, HttpException, HttpStatus, NotFoundException } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, HttpException, HttpStatus, NotFoundException, ParseIntPipe } from '@nestjs/common';
 import { MovimientoSalidaService } from './movimiento-salida.service';
 import { CreateMovimientoSalidaDto } from './dto/create-movimiento-salida.dto';
 import { UpdateMovimientoSalidaDto } from './dto/update-movimiento-salida.dto';
@@ -35,7 +35,7 @@ export class MovimientoSalidaController {
     }
   }
 
-  @Get(':id')
+  @Get('/findOne/:id')
   async findOne(@Param('id') id: number) : Promise<MovimientoSalida> {
     try {
               return await this.movimientoSalidaService.findOne(id);
@@ -83,4 +83,55 @@ export class MovimientoSalidaController {
         )
     }
   }
+
+  @Delete('/softDelete/:id')
+  async softDelete(@Param('id', ParseIntPipe) id: number): Promise<void>{
+    try{
+      await this.movimientoSalidaService.softDelete(id)
+    }
+    catch (e) {
+      if (e instanceof NotFoundException){
+        throw e
+      }
+      console.error('Error al eliminar el movimiento de salida:', e)
+      throw new HttpException(
+        'Ocurrió un error el movimiento de salida',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      )
+    }
+    
+  }
+
+  @Patch('/restore/:id')
+  async restore(@Param('id',ParseIntPipe) id: number) : Promise<void>{
+    try{
+      await this.movimientoSalidaService.restore(id)
+    }
+    catch (e) {
+      if (e instanceof NotFoundException){
+        throw e
+      }
+      console.error('Error al restaurar el movimiento de salida:', e)
+      throw new HttpException(
+        'Ocurrió un error el movimiento de salida',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      )
+    }
+    
+  }
+
+  @Get('/findSoftDeleted')
+  async findSoftDeleted() : Promise<MovimientoSalida[]>{
+    try{
+      return await this.movimientoSalidaService.findSoftDeleted()
+    }
+    catch (e) {
+      console.error('Error al buscar los movimientos de salida:', e)
+      throw new HttpException(
+        'Error al buscar los movimientos de salida',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      )
+    }
+  }
+
 }

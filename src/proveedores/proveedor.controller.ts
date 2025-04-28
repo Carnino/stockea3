@@ -84,4 +84,51 @@ export class ProveedorController {
         )
     }
   }
+
+  @Delete('/softDelete/:id')
+  async softDelete(@Param('id', ParseIntPipe) id :number) : Promise<void>{
+    try{
+      await this.proveedorService.softDelete(id)
+    }
+    catch(e){
+      if (e instanceof NotFoundException){
+        throw e
+      }
+      console.error('Error al eliminar el Proveedor:', e)
+      throw new HttpException(
+        'Ocurrió un error en el proveedor',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      )
+    }
+  }
+
+  @Patch('/restore/:id')
+  async restore(@Param('id', ParseIntPipe) id : number) :Promise<void>{
+    try{
+      await this.proveedorService.restore(id)
+    }catch (e) {
+      if (e instanceof NotFoundException){
+        throw e
+      }
+      console.error('Error al restaurar el Proveedor:', e)
+      throw new HttpException(
+        'Ocurrió un error en el Proveedor',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      )
+    }
+  }
+
+  @Get('/findSoftDeleted')
+  async findSofDeleted() : Promise<Proveedor[]>{
+    try {
+      return await this.proveedorService.findSoftDeleted()
+    } catch (e) {
+      console.error('Error al buscar los proveedores:', e)
+      throw new HttpException(
+        'Error al buscar los proveedores',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      )
+    }
+
+  }
 }

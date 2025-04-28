@@ -23,7 +23,7 @@ export class MarcaController {
   }
 
   @Get()
-  findAll() {
+  findAll():Promise<Marca[]> {
     //Este try catch es basico se puede mejorar para llaves unicas por ejemplo
     try {
       return this.MarcaService.findAll();
@@ -37,7 +37,7 @@ export class MarcaController {
   }
 
 
-  @Get(':id')
+  @Get('/findOne/:id')
   async findOne(@Param('id', ParseIntPipe) id: number): Promise<Marca> {
     try {
       return await this.MarcaService.findOne(id);
@@ -86,4 +86,52 @@ export class MarcaController {
     }
     
   }
+
+  @Delete('/softDelete/:id')
+  async softDelete(@Param('id', ParseIntPipe) id: number): Promise<void>{
+    try {
+      await this.MarcaService.softDelete(id)
+    } catch (e) {
+      if (e instanceof NotFoundException){
+        throw e
+      }
+      console.error('Error al eliminar la marca:', e)
+      throw new HttpException(
+        'Ocurrió un error al eliminar la marca',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      )
+    }
+  }
+
+  @Patch('/restore/:id')
+  async restore(@Param('id', ParseIntPipe) id: number): Promise<void>{
+    try {
+      await this.MarcaService.restore(id)
+    } catch (e) {
+      if (e instanceof NotFoundException){
+        throw e
+      }
+      console.error('Error al restaurar la marca:', e)
+      throw new HttpException(
+        'Ocurrió un error al restaurar la marca',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      )
+    }
+    
+  }
+
+  @Get('/findSoftDeleted')
+  async findSoftDeleted():Promise<Marca[]>{
+    try {
+      return this.MarcaService.findSoftDeleted();
+    } catch (e) {
+      console.error('Error al buscar las marcas:', e)
+        throw new HttpException(
+          'Ocurrió un error al buscar las marcas',
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        )
+    }
+  }
+
+
 }

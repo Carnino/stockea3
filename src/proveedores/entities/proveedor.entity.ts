@@ -1,7 +1,6 @@
-import { Column, Entity, PrimaryGeneratedColumn, Unique } from "typeorm";
+import { Column, DeleteDateColumn, Entity, PrimaryGeneratedColumn, Unique } from "typeorm";
 
 @Entity('proveedor')
-@Unique(['id'])
 export class Proveedor {
     @PrimaryGeneratedColumn()
     id: number;
@@ -17,4 +16,7 @@ export class Proveedor {
 
     @Column({ type: 'bigint', nullable: true })
     cuit: number;
+
+    @DeleteDateColumn()
+    deletedAt: Date; 
 }

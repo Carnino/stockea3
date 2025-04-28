@@ -1,8 +1,6 @@
-import { Column, Entity, PrimaryGeneratedColumn, Unique } from "typeorm";
+import { Column, DeleteDateColumn, Entity, PrimaryGeneratedColumn, Unique } from "typeorm";
 
 @Entity('marca')
-@Unique(['id'])
-
 export class Marca {
 
     @PrimaryGeneratedColumn()
@@ -13,5 +11,8 @@ export class Marca {
     
     @Column({ type: 'text'})
     descripcion: string;
+
+    @DeleteDateColumn()
+    deletedAt: Date; // Esta es la columna clave para el soft delete
 }
 

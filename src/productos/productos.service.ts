@@ -1,6 +1,6 @@
-import { HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
+import { ConflictException, HttpException, HttpStatus, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { QueryFailedError, Repository } from 'typeorm';
+import { IsNull, Not, QueryFailedError, Repository } from 'typeorm';
 import { Producto } from './entities/producto.entity';
 import { CreateProductoDto } from './dto/create-producto.dto';
 import { UpdateProductoDto } from './dto/update-producto.dto';
@@ -19,7 +19,7 @@ export class ProductosService {
 
   async findAll(): Promise<Producto[]> {
     return await this.productoRepository.find({
-      relations: ['categoria', 'marca'], // Especifica las relaciones a cargar
+      relations: ['categoria', 'marca','proveedor'], // Especifica las relaciones a cargar
     });
   }
 
@@ -37,20 +37,24 @@ export class ProductosService {
   }
 
   async update(id: number, updateProductoDto: UpdateProductoDto): Promise<Producto> {
+    try {
     const producto = await this.findOne(id); 
 
     const updatedProducto =  this.productoRepository.merge(producto, updateProductoDto);
 
-    try {
-      return await this.productoRepository.save(updatedProducto);
-    } catch (error) {
-      if (error instanceof QueryFailedError && error.driverError.code === '23503') {
-        throw new NotFoundException(
-          'No se pudo actualizar el producto debido a un error con las claves foráneas proporcionadas. Verifica que los IDs de categoría y marca sean válidos.',
-        );
+    return await this.productoRepository.save(updatedProducto);
+
+    } catch (e) {
+      // Loguear el error para depuración
+      console.error('Error al actualizar el producto:', e);
+
+      // Ejemplo de manejo de error de base de datos
+      if (e instanceof QueryFailedError && e.driverError?.code === '23503') { // Código foreign_key_violation en PostgreSQL
+        console.log(e)
+        throw new ConflictException('Marca, categoria o proveedor no es correcta');
+        
       }
-      // Si es otro error, lanza un Internal Server Error
-      throw new HttpException('Error al actualizar el producto', HttpStatus.INTERNAL_SERVER_ERROR);
+      throw new InternalServerErrorException('Error interno al intentar actualizar el producto.');
     }
     
   }
@@ -61,4 +65,30 @@ export class ProductosService {
       throw new NotFoundException(`El producto con ID ${id} no se encontró`);
     }
   }
+
+  async softDelete(id: number): Promise<void> {
+      const result = await this.productoRepository.softDelete(id)
+  
+      if(result.affected === 0){
+        throw new NotFoundException(`El producto con ID ${id} no se encontró`)
+      }
+    }
+  
+    async restore(id: number): Promise<void>{
+      const result = await this.productoRepository.restore(id)
+  
+      if(result.affected === 0){
+        throw new NotFoundException(`El producto con ID ${id} no se encontró`)
+      }
+  
+    }
+  
+    async findSoftDeleted(): Promise<Producto[]> {
+      return await this.productoRepository.find({ 
+        where:{
+          deletedAt: Not(IsNull()), 
+        },
+        withDeleted: true 
+      });
+    }
 }

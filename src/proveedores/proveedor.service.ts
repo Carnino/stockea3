@@ -3,7 +3,7 @@ import { CreateProveedorDto } from './dto/create-proveedor.dto';
 import { UpdateProveedorDto } from './dto/update-proveedor.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Proveedor} from './entities/proveedor.entity';
-import { Repository } from 'typeorm';
+import { IsNull, Not, Repository } from 'typeorm';
 
 @Injectable()
 export class ProveedorService {
@@ -49,4 +49,30 @@ export class ProveedorService {
         throw new NotFoundException(`El Proveedor con ID ${id} no se encontró`);
     }
   }
-}
+
+  async softDelete(id : number): Promise<void>{
+    const result = await this.proveedorRepository.softDelete(id)
+
+    if(result.affected === 0){
+      throw new NotFoundException(`El Proveedor con ID ${id} no se encontró`)
+    }
+  }
+
+  async restore(id : number) : Promise<void>{
+    const result = await this.proveedorRepository.restore(id)
+    if(result.affected === 0){
+      throw new NotFoundException(`El Proveedor con ID ${id} no se encontró`)
+    }
+  }
+
+  async findSoftDeleted() : Promise<Proveedor[]>{
+    return await this.proveedorRepository.find({
+          where: {
+            deletedAt: Not(IsNull()),
+          },
+          withDeleted: true
+        })
+      }
+  }
+
+
