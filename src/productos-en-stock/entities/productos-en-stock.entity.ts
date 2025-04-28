@@ -1,6 +1,6 @@
 import { MovimientoSalida } from "src/movimiento-salida/entities/movimiento-salida.entity";
 import { Producto } from "src/productos/entities/producto.entity";
-import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, DeleteDateColumn, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity('productos_en_stock')
 export class ProductosEnStock {
@@ -21,4 +21,7 @@ export class ProductosEnStock {
     @ManyToOne(() => MovimientoSalida)
     @JoinColumn({ name: 'movimiento_salida_id'})
     movimientoSalida: MovimientoSalida
+
+    @DeleteDateColumn()
+    deletedAt: Date; 
 }
