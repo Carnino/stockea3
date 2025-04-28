@@ -35,7 +35,7 @@ export class CategoriasController {
     }
   }
 
-  @Get(':id')
+  @Get('/findOne/:id')
   async findOne(@Param('id', ParseIntPipe) id: number): Promise<Categoria> {
     try {
           return await this.categoriasService.findOne(id);
@@ -79,6 +79,51 @@ export class CategoriasController {
       console.error('Error al eliminar la categoria:', e)
         throw new HttpException(
           'Ocurrió un error al eliminar la categoria',
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        )
+    }
+  }
+
+  @Delete('/softDelete/:id')
+  async softDelete(@Param('id', ParseIntPipe) id: number): Promise<void>{
+    try {
+      await this.categoriasService.softDelete(id)
+    } catch (e) {
+      if (e instanceof NotFoundException){
+        throw e
+      }
+      console.error('Error al eliminar la categoria:', e)
+      throw new HttpException(
+        'Ocurrió un error al eliminar la categoria',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      )
+    }
+  }
+
+  @Patch('/restore/:id')
+  async restore(@Param('id', ParseIntPipe) id: number): Promise<void>{
+    try {
+      await this.categoriasService.restore(id)
+    } catch (e) {
+      if (e instanceof NotFoundException){
+        throw e
+      }
+      console.error('Error al restaurar la categoria:', e)
+      throw new HttpException(
+        'Ocurrió un error al restaurar la categoria',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      )
+    }
+  }
+
+  @Get('/findSoftDeleted')
+  async findSoftDeleted():Promise<Categoria[]>{
+    try {
+      return this.categoriasService.findSoftDeleted();
+    } catch (e) {
+      console.error('Error al buscar las categorias:', e)
+        throw new HttpException(
+          'Ocurrió un error al buscar las categorias',
           HttpStatus.INTERNAL_SERVER_ERROR,
         )
     }

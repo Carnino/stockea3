@@ -1,4 +1,4 @@
-import { Column, Entity, PrimaryGeneratedColumn, Unique } from "typeorm";
+import { Column, DeleteDateColumn, Entity, PrimaryGeneratedColumn, Unique } from "typeorm";
 
 @Entity('categoria')
 export class Categoria {
@@ -14,5 +14,7 @@ export class Categoria {
     
     @Column({ type: 'text', nullable: true })
     imagen: string;
-}
 
+    @DeleteDateColumn()
+    deletedAt: Date; 
+}
