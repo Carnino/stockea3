@@ -2,7 +2,7 @@ import { Injectable, NotFoundException} from '@nestjs/common';
 import { CreateCategoriaDto } from './dto/create-categoria.dto';
 import { UpdateCategoriaDto } from './dto/update-categoria.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { IsNull, Not, Repository } from 'typeorm';
 import { Categoria } from './entities/categoria.entity';
 
 
@@ -51,4 +51,30 @@ export class CategoriasService {
 
     const removeCategoria = this.categoriaRepository.remove(categoria)
   }
+
+  async softDelete(id: number): Promise<void>{
+    const result = await this.categoriaRepository.softDelete(id)
+
+    if(result.affected === 0) {
+      throw new NotFoundException(`La categoria con ID ${id} no se encontró`)
+    }
+  }
+
+  async restore(id: number): Promise<void>{
+    const result = await this.categoriaRepository.restore(id)
+
+    if(result.affected === 0){
+      throw new NotFoundException(`La categoria con ID ${id} no se encontró`)
+    }
+  }
+
+  async findSoftDeleted(): Promise<Categoria[]> {
+    return await this.categoriaRepository.find({ 
+      where:{
+        deletedAt: Not(IsNull()), 
+      },
+      withDeleted: true 
+    });
+  }
+
 }

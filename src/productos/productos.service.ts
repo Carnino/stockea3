@@ -1,6 +1,6 @@
 import { ConflictException, HttpException, HttpStatus, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { QueryFailedError, Repository } from 'typeorm';
+import { IsNull, Not, QueryFailedError, Repository } from 'typeorm';
 import { Producto } from './entities/producto.entity';
 import { CreateProductoDto } from './dto/create-producto.dto';
 import { UpdateProductoDto } from './dto/update-producto.dto';
@@ -19,7 +19,7 @@ export class ProductosService {
 
   async findAll(): Promise<Producto[]> {
     return await this.productoRepository.find({
-      relations: ['categoria', 'marca'], // Especifica las relaciones a cargar
+      relations: ['categoria', 'marca','proveedor'], // Especifica las relaciones a cargar
     });
   }
 
@@ -65,4 +65,30 @@ export class ProductosService {
       throw new NotFoundException(`El producto con ID ${id} no se encontró`);
     }
   }
+
+  async softDelete(id: number): Promise<void> {
+      const result = await this.productoRepository.softDelete(id)
+  
+      if(result.affected === 0){
+        throw new NotFoundException(`El producto con ID ${id} no se encontró`)
+      }
+    }
+  
+    async restore(id: number): Promise<void>{
+      const result = await this.productoRepository.restore(id)
+  
+      if(result.affected === 0){
+        throw new NotFoundException(`El producto con ID ${id} no se encontró`)
+      }
+  
+    }
+  
+    async findSoftDeleted(): Promise<Producto[]> {
+      return await this.productoRepository.find({ 
+        where:{
+          deletedAt: Not(IsNull()), 
+        },
+        withDeleted: true 
+      });
+    }
 }
