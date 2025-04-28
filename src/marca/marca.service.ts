@@ -2,7 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateMarcaDto } from './dto/create-marca.dto';
 import { UpdateMarcaDto } from './dto/update-marca.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { IsNull, Not, Repository } from 'typeorm';
 import { Marca } from './entities/marca.entity';
 
 
@@ -71,7 +71,12 @@ export class MarcaService {
   }
 
   async findSoftDeleted(): Promise<Marca[]> {
-    return await this.marcaRepository.find({ withDeleted: true });
+    return await this.marcaRepository.find({ 
+      where:{
+        deletedAt: Not(IsNull()), 
+      },
+      withDeleted: true 
+    });
   }
 
   

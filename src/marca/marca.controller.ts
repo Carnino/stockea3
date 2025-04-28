@@ -37,7 +37,7 @@ export class MarcaController {
   }
 
 
-  @Get(':id')
+  @Get('/findOne/:id')
   async findOne(@Param('id', ParseIntPipe) id: number): Promise<Marca> {
     try {
       return await this.MarcaService.findOne(id);
