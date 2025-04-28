@@ -4,7 +4,6 @@ import { Proveedor } from 'src/proveedores/entities/proveedor.entity';
 import { Entity, PrimaryGeneratedColumn, Column, Unique, ManyToOne, JoinColumn } from 'typeorm';
 
 @Entity('producto')
-@Unique(['codigo']) // El código debe ser único
 export class Producto {
   @PrimaryGeneratedColumn()
   id: number;
@@ -13,6 +12,7 @@ export class Producto {
   nombre: string;
 
   @Column({ type: 'varchar', length: 50, unique: true })
+  @Unique(['codigo']) // El código debe ser único
   codigo: string;
 
   @Column({ type: 'text', nullable: true })

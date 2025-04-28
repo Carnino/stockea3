@@ -1,8 +1,6 @@
 import { Column, DeleteDateColumn, Entity, PrimaryGeneratedColumn, Unique } from "typeorm";
 
 @Entity('marca')
-@Unique(['id'])
-
 export class Marca {
 
     @PrimaryGeneratedColumn()
