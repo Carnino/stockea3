@@ -14,7 +14,7 @@ export class CreateProductoDto {
   @IsNotEmpty()
   descripcion: string;
 
-/*   @IsNumber()
+  @IsNumber()
   @IsNotEmpty()
   categoria: number;
 
@@ -25,5 +25,5 @@ export class CreateProductoDto {
   @IsNumber()
   @IsNotEmpty()
   proveedor: number;
- */
+ 
 }

@@ -1,9 +1,12 @@
-import { ConflictException, HttpException, HttpStatus, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
+import { BadRequestException, ConflictException, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { IsNull, Not, QueryFailedError, Repository } from 'typeorm';
 import { Producto } from './entities/producto.entity';
 import { CreateProductoDto } from './dto/create-producto.dto';
 import { UpdateProductoDto } from './dto/update-producto.dto';
+import { Categoria } from 'src/categorias/entities/categoria.entity';
+import { Marca } from 'src/marca/entities/marca.entity';
+import { Proveedor } from 'src/proveedores/entities/proveedor.entity';
 
 @Injectable()
 export class ProductosService {
@@ -13,8 +16,36 @@ export class ProductosService {
   ) {}
 
   async create(createProductoDto: CreateProductoDto): Promise<Producto> {
-    const producto = this.productoRepository.create(createProductoDto);
-    return await this.productoRepository.save(producto);
+    // 1. Crea una instancia básica del producto con las propiedades directas
+    const producto = this.productoRepository.create({
+      nombre: createProductoDto.nombre,
+      codigo: createProductoDto.codigo,
+      descripcion: createProductoDto.descripcion,
+      // NO incluyas 'categoria', 'marca', 'proveedor' aquí directamente
+      // con los IDs del DTO.
+    });
+
+    // 2. Asigna las relaciones usando los IDs del DTO.
+    // TypeORM entenderá que estos son los IDs de las entidades relacionadas
+    if (createProductoDto.categoria) {
+      producto.categoria = { id: createProductoDto.categoria as number } as Categoria;
+    }
+    if (createProductoDto.marca) {
+      producto.marca = { id: createProductoDto.marca as number } as Marca;
+    }
+    if (createProductoDto.proveedor) {
+      producto.proveedor = { id: createProductoDto.proveedor as number } as Proveedor;
+    }
+
+    // 3. Guarda el producto. TypeORM se encargará de las relaciones
+    try {
+      return await this.productoRepository.save(producto);
+    } catch (e) {
+      if (e instanceof QueryFailedError && e.driverError?.code === '23505') { 
+        throw new ConflictException('El codigo del producto ya existe');
+      }
+      throw new InternalServerErrorException('Error interno al intentar actualizar el producto.');
+    }  
   }
 
   async findAll(): Promise<Producto[]> {
@@ -36,7 +67,7 @@ export class ProductosService {
     return producto;
   }
 
-  async update(id: number, updateProductoDto: UpdateProductoDto): Promise<Producto> {
+  /* async update(id: number, updateProductoDto: UpdateProductoDto): Promise<Producto> {
     try {
     const producto = await this.findOne(id); 
 
@@ -57,7 +88,7 @@ export class ProductosService {
       throw new InternalServerErrorException('Error interno al intentar actualizar el producto.');
     }
     
-  }
+  } */
 
   async remove(id: number): Promise<void> {
     const result = await this.productoRepository.delete(id)
