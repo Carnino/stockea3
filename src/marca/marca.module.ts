@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
-import { MarcaService } from './marca.service';
-import { MarcaController } from './marca.controller';
+import { MarcasService } from './marca.service';
+import { MarcasController } from './marca.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Marca } from './entities/marca.entity';
 
@@ -8,7 +8,7 @@ import { Marca } from './entities/marca.entity';
   imports: [
     TypeOrmModule.forFeature([Marca]),
   ],
-  controllers: [MarcaController],
-  providers: [MarcaService],
+  controllers: [MarcasController],
+  providers: [MarcasService],
   })
 export class MarcaModule {}

@@ -1,22 +1,23 @@
-import { Column, DeleteDateColumn, Entity, PrimaryGeneratedColumn, Unique } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, Unique, DeleteDateColumn } from 'typeorm';
 
 @Entity('proveedor')
 export class Proveedor {
-    @PrimaryGeneratedColumn()
-    id: number;
+  @PrimaryGeneratedColumn()
+  id: number;
 
-    @Column({ type: 'varchar', length: 255, nullable: true })
-    nombre: string;
-    
-    @Column({ type: 'text', nullable: true})
-    codigo: string;
-    
-    @Column({ type: 'bigint', nullable: true })
-    telefono: number;
+  @Column({ type: 'varchar', length: 50, unique: true })
+  @Unique(['codigo'])
+  codigo: string;
 
-    @Column({ type: 'bigint', nullable: true })
-    cuit: number;
+  @Column({ type: 'varchar', length: 255 })
+  nombre: string;
 
-    @DeleteDateColumn()
-    deletedAt: Date; 
+  @Column({ type: 'varchar', length: 20 })
+  telefono: string;
+
+  @Column({ type: 'varchar', length: 15 })
+  cuit: string;
+
+  @DeleteDateColumn()
+  deletedAt: Date;
 }

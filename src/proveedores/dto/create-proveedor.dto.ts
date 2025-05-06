@@ -1,19 +1,19 @@
-import { IsNotEmpty, IsNumber, IsOptional, IsString } from "class-validator";
+import { IsString, IsNotEmpty } from 'class-validator';
 
 export class CreateProveedorDto {
-    @IsString()
-    @IsNotEmpty()
-    nombre: string;
+  @IsString()
+  @IsNotEmpty()
+  codigo: string;
 
-    @IsString()
-    @IsNotEmpty()
-    codigo: string;
+  @IsString()
+  @IsNotEmpty()
+  nombre: string;
 
-    @IsNotEmpty()
-    @IsNumber()
-    telefono: number;
-    
-    @IsNotEmpty()
-    @IsNumber()
-    cuit: number;
+  @IsString()
+  @IsNotEmpty()
+  telefono: string;
+
+  @IsString()
+  @IsNotEmpty()
+  cuit: string;
 }

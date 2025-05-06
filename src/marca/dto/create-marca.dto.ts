@@ -1,12 +1,11 @@
-import { IsEmpty, IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
+import { IsString, IsNotEmpty, IsOptional } from 'class-validator';
 
 export class CreateMarcaDto {
+  @IsString()
+  @IsNotEmpty()
+  nombre: string;
 
-    @IsNotEmpty()
-    @IsString()
-    nombre: string
-    
-    @IsOptional()
-    @IsString()
-    descripcion?: string
+  @IsString()
+  @IsOptional()
+  descripcion?: string;
 }

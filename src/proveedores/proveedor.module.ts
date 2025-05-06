@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
-import { ProveedorService } from './proveedor.service';
-import { ProveedorController } from './proveedor.controller';
+import { ProveedoresService } from './proveedor.service';
+import { ProveedoresController } from './proveedor.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Proveedor } from './entities/proveedor.entity';
 
@@ -8,8 +8,8 @@ import { Proveedor } from './entities/proveedor.entity';
   imports: [
     TypeOrmModule.forFeature([Proveedor]),
   ],
-  controllers: [ProveedorController],
-  providers: [ProveedorService],
+  controllers: [ProveedoresController],
+  providers: [ProveedoresService],
 })
 export class ProveedorModule {}
 

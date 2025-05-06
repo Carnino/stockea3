@@ -1,83 +1,45 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { Marca } from './entities/marca.entity';
 import { CreateMarcaDto } from './dto/create-marca.dto';
 import { UpdateMarcaDto } from './dto/update-marca.dto';
-import { InjectRepository } from '@nestjs/typeorm';
-import { IsNull, Not, Repository } from 'typeorm';
-import { Marca } from './entities/marca.entity';
-
 
 @Injectable()
-export class MarcaService {
-
+export class MarcasService {
   constructor(
-    @InjectRepository(Marca) 
-    private marcaRepository: Repository<Marca>,
+    @InjectRepository(Marca)
+    private readonly marcaRepository: Repository<Marca>,
   ) {}
 
-  //Funcion crear marca
   async create(createMarcaDto: CreateMarcaDto): Promise<Marca> {
     const marca = this.marcaRepository.create(createMarcaDto);
     return await this.marcaRepository.save(marca);
   }
 
   async findAll(): Promise<Marca[]> {
-    return await this.marcaRepository.find();
+    return await this.marcaRepository.find({ withDeleted: false });
   }
 
   async findOne(id: number): Promise<Marca> {
     const marca = await this.marcaRepository.findOne({
-      where: {
-        id: id, 
-      },
+      where: { id },
+      withDeleted: false,
     });
-
-    if(!marca){
-      throw new NotFoundException(`La marca con ID ${id} no se encontró`);
-    } 
-
+    if (!marca) {
+      throw new NotFoundException(`Marca con ID ${id} no encontrada`);
+    }
     return marca;
   }
 
   async update(id: number, updateMarcaDto: UpdateMarcaDto): Promise<Marca> {
-    const marca = await this.findOne(id)
-
-    const updatedMarca = this.marcaRepository.merge(marca, updateMarcaDto);
-
-    return await this.marcaRepository.save(updatedMarca);
+    const marca = await this.findOne(id);
+    Object.assign(marca, updateMarcaDto);
+    return await this.marcaRepository.save(marca);
   }
 
   async remove(id: number): Promise<void> {
-    const result = await this.marcaRepository.delete(id);
-    if (result.affected === 0) {
-        throw new NotFoundException(`La marca con ID ${id} no se encontró`);
-    }
+    const marca = await this.findOne(id);
+    await this.marcaRepository.softDelete(id);
   }
-
-  async softDelete(id: number): Promise<void> {
-    const result = await this.marcaRepository.softDelete(id)
-
-    if(result.affected === 0){
-      throw new NotFoundException(`La marca con ID ${id} no se encontró`)
-    }
-  }
-
-  async restore(id: number): Promise<void>{
-    const result = await this.marcaRepository.restore(id)
-
-    if(result.affected === 0){
-      throw new NotFoundException(`La marca con ID ${id} no se encontró`)
-    }
-
-  }
-
-  async findSoftDeleted(): Promise<Marca[]> {
-    return await this.marcaRepository.find({ 
-      where:{
-        deletedAt: Not(IsNull()), 
-      },
-      withDeleted: true 
-    });
-  }
-
-  
 }

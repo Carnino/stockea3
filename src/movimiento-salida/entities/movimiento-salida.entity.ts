@@ -1,16 +1,16 @@
-import { Column, DeleteDateColumn, Entity, PrimaryGeneratedColumn, Unique } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, DeleteDateColumn } from 'typeorm';
 
-@Entity('MovimientoSalida')
+@Entity('movimiento_salida')
 export class MovimientoSalida {
-    @PrimaryGeneratedColumn()
-    id: number;
-    
-    @Column({ type: 'varchar', length: 255 })
-    nombre: string;
-    
-    @Column({ type: 'text'})
-    descripcion: string;
+  @PrimaryGeneratedColumn()
+  id: number;
 
-    @DeleteDateColumn()
-    deletedAt: Date; 
+  @Column({ type: 'timestamp' })
+  fechaHora: Date;
+
+  @Column({ type: 'int' })
+  total: number;
+
+  @DeleteDateColumn()
+  deletedAt: Date;
 }
