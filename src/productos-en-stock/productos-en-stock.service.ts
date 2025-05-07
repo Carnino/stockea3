@@ -1,76 +1,67 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { CreateProductosEnStockDto } from './dto/create-productos-en-stock.dto';
-import { UpdateProductosEnStockDto } from './dto/update-productos-en-stock.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { ProductosEnStock } from './entities/productos-en-stock.entity';
-import { IsNull, Not, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
+import { ProductoEnStock } from './entities/productos-en-stock.entity';
+import { CreateProductoEnStockDto } from './dto/create-productos-en-stock.dto';
+import { UpdateProductoEnStockDto } from './dto/update-productos-en-stock.dto';
 
 @Injectable()
 export class ProductosEnStockService {
-  
   constructor(
-    @InjectRepository(ProductosEnStock)
-    private productosEnStockRepository : Repository<ProductosEnStock>
-  ){}
-  
-    async create(createProveedorDto: CreateProductosEnStockDto) : Promise<ProductosEnStock> {
-      const provedores = this.productosEnStockRepository.create(createProveedorDto)
-      return await this.productosEnStockRepository.save(provedores)
+    @InjectRepository(ProductoEnStock)
+    private readonly productoEnStockRepository: Repository<ProductoEnStock>,
+  ) {}
+
+  async create(createProductoEnStockDto: CreateProductoEnStockDto): Promise<ProductoEnStock> {
+    const productoEnStock = this.productoEnStockRepository.create({
+      ...createProductoEnStockDto,
+      producto: { id: createProductoEnStockDto.productoId },
+    });
+    return await this.productoEnStockRepository.save(productoEnStock);
+  }
+
+  async findAllAvailable(search?: string): Promise<ProductoEnStock[]> {
+    const query = this.productoEnStockRepository.createQueryBuilder('pes')
+      .leftJoinAndSelect('pes.producto', 'producto')
+      .where('pes.deletedAt IS NULL');
+
+    if (search) {
+      query.andWhere('producto.nombre ILIKE :search', { search: `%${search}%` });
     }
-  
-    async findAll() : Promise<ProductosEnStock[]> {
-          return await this.productosEnStockRepository.find();
-        }
-  
-    async findOne(id: number): Promise<ProductosEnStock> {
-      const proveedores = await this.productosEnStockRepository.findOne({
-        where: {
-          id: id,
-        },
-      });
-  
-      if(!proveedores){
-        throw new NotFoundException (`El Producto En Stock con ID ${id} no se encontró`);
-      }
-  
-      return proveedores
+
+    return await query.getMany();
+  }
+
+  async findOne(id: number): Promise<ProductoEnStock> {
+    const productoEnStock = await this.productoEnStockRepository.findOne({
+      where: { id },
+      withDeleted: false,
+      relations: ['producto', 'movimientoSalida'],
+    });
+    if (!productoEnStock) {
+      throw new NotFoundException(`Producto en stock con ID ${id} no encontrado`);
     }
-  
-    async update(id: number, updateProdcutoEnStockDto: UpdateProductosEnStockDto):Promise<ProductosEnStock> {
-      const proveedores = await this.findOne(id)
-  
-      const upadteProveedores = this.productosEnStockRepository.merge(proveedores,updateProdcutoEnStockDto) 
-      return await this.productosEnStockRepository.save(upadteProveedores);
+    return productoEnStock;
+  }
+
+  async update(id: number, updateProductoEnStockDto: UpdateProductoEnStockDto): Promise<ProductoEnStock> {
+    const productoEnStock = await this.findOne(id);
+    if (updateProductoEnStockDto.productoId) {
+      productoEnStock.producto = { id: updateProductoEnStockDto.productoId } as any;
     }
-  
-    async remove(id: number): Promise<void>{
-      const result = await this.productosEnStockRepository.delete(id);
-      if (result.affected === 0) {
-          throw new NotFoundException(`El Producto en Stock con ID ${id} no se encontró`);
-      }
+    if (updateProductoEnStockDto.movimientoSalidaId) {
+      productoEnStock.movimientoSalida = { id: updateProductoEnStockDto.movimientoSalidaId } as any;
     }
-  
-    async softDelete(id : number): Promise<void>{
-      const result = await this.productosEnStockRepository.softDelete(id)
-  
-      if(result.affected === 0){
-        throw new NotFoundException(`El Producto En Stock con ID ${id} no se encontró`)
-      }
-    }
-  
-    async restore(id : number) : Promise<void>{
-      const result = await this.productosEnStockRepository.restore(id)
-      if(result.affected === 0){
-        throw new NotFoundException(`El Producto en Stock con ID ${id} no se encontró`)
-      }
-    }
-  
-    async findSoftDeleted() : Promise<ProductosEnStock[]>{
-      return await this.productosEnStockRepository.find({
-            where: {
-              deletedAt: Not(IsNull()),
-            },
-            withDeleted: true
-          })
-        }
+    Object.assign(productoEnStock, {
+      costo: updateProductoEnStockDto.costo,
+      fechaAdquisicion: updateProductoEnStockDto.fechaAdquisicion ? new Date(updateProductoEnStockDto.fechaAdquisicion) : undefined,
+      stock: updateProductoEnStockDto.stock,
+    });
+    return await this.productoEnStockRepository.save(productoEnStock);
+  }
+
+  async remove(id: number): Promise<void> {
+    const productoEnStock = await this.findOne(id);
+    await this.productoEnStockRepository.softDelete(id);
+  }
 }
