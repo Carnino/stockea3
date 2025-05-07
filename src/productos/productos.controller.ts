@@ -52,7 +52,7 @@ export class ProductosController {
 
 
   // Por el momento no se usa. En caso de usarlo hay que arreglar la parte de modificar una foreign key
-  @Patch(':id')
+/*   @Patch(':id')
   update(@Param('id', ParseIntPipe) id: number, @Body() updateProductoDto: UpdateProductoDto): Promise<Producto>{
     try {
       return this.productosService.update(id, updateProductoDto);
@@ -67,7 +67,7 @@ export class ProductosController {
         )
       }
     }
-  }
+  } */
 
   @Delete(':id')
   remove(@Param('id', ParseIntPipe) id: number):Promise<void> {
