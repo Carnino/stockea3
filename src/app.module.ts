@@ -19,7 +19,7 @@ import { MovimientoSalidaModule } from './movimiento-salida/movimiento-salida.mo
     database: 'stockea3',
     entities: [__dirname+'/**/*.entity.{ts,js}'],
     synchronize: true, //SE USA SOLO EN DESARROLLO
-    dropSchema: false
+    dropSchema: true
   }),ProductosModule, ProveedorModule, CategoriasModule, MarcaModule, ProductosEnStockModule, MovimientoSalidaModule],
   controllers: [AppController],
   providers: [AppService],
