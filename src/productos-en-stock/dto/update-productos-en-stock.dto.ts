@@ -1,11 +1,5 @@
-<<<<<<< HEAD
 import { IsNumber, IsOptional, IsDateString } from 'class-validator';
 
-=======
-
-import { IsNumber, IsOptional, IsDateString } from 'class-validator';
-
->>>>>>> desarrollo_ulises
 export class UpdateProductoEnStockDto {
   @IsNumber()
   @IsOptional()
@@ -26,8 +20,4 @@ export class UpdateProductoEnStockDto {
   @IsNumber()
   @IsOptional()
   movimientoSalidaId?: number;
-<<<<<<< HEAD
 }
-=======
-}
->>>>>>> desarrollo_ulises

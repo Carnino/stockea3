@@ -1,7 +1,3 @@
-<<<<<<< HEAD
-=======
-
->>>>>>> desarrollo_ulises
 import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe, Query } from '@nestjs/common';
 import { ProductosEnStockService } from './productos-en-stock.service';
 import { CreateProductoEnStockDto } from './dto/create-productos-en-stock.dto';
