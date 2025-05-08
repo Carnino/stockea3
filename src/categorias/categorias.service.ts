@@ -1,80 +1,45 @@
-import { Injectable, NotFoundException} from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { Categoria } from './entities/categoria.entity';
 import { CreateCategoriaDto } from './dto/create-categoria.dto';
 import { UpdateCategoriaDto } from './dto/update-categoria.dto';
-import { InjectRepository } from '@nestjs/typeorm';
-import { IsNull, Not, Repository } from 'typeorm';
-import { Categoria } from './entities/categoria.entity';
-
 
 @Injectable()
 export class CategoriasService {
-  
   constructor(
     @InjectRepository(Categoria)
-    private categoriaRepository : Repository<Categoria>
-  ){}
-  
+    private readonly categoriaRepository: Repository<Categoria>,
+  ) {}
 
   async create(createCategoriaDto: CreateCategoriaDto): Promise<Categoria> {
-      const Categoria = this.categoriaRepository.create(createCategoriaDto);
-      return await this.categoriaRepository.save(Categoria);
-    }
+    const categoria = this.categoriaRepository.create(createCategoriaDto);
+    return await this.categoriaRepository.save(categoria);
+  }
 
-  async findAll():Promise<Categoria[]> {
-    return await this.categoriaRepository.find();
+  async findAll(): Promise<Categoria[]> {
+    return await this.categoriaRepository.find({ withDeleted: false });
   }
 
   async findOne(id: number): Promise<Categoria> {
-      const categoria = await this.categoriaRepository.findOne({
-        where: {
-          id: id, 
-        },
-      });
-  
-      if(!categoria){
-        throw new NotFoundException(`La categoria con ID ${id} no se encontró`);
-      } 
-  
-      return categoria;
+    const categoria = await this.categoriaRepository.findOne({
+      where: { id },
+      withDeleted: false,
+    });
+    if (!categoria) {
+      throw new NotFoundException(`Categoría con ID ${id} no encontrada`);
     }
+    return categoria;
+  }
 
   async update(id: number, updateCategoriaDto: UpdateCategoriaDto): Promise<Categoria> {
-    const categoria = await this.findOne(id)
-
-    const updatedCategoria = this.categoriaRepository.merge(categoria, updateCategoriaDto);
-
-    return await this.categoriaRepository.save(updatedCategoria);
+    const categoria = await this.findOne(id);
+    Object.assign(categoria, updateCategoriaDto);
+    return await this.categoriaRepository.save(categoria);
   }
 
-  async remove(id: number) : Promise<void> {
-    const categoria = await this.findOne(id)
-
-    const removeCategoria = this.categoriaRepository.remove(categoria)
+  async remove(id: number): Promise<void> {
+    const categoria = await this.findOne(id);
+    await this.categoriaRepository.softDelete(id);
   }
-
-  async softDelete(id: number): Promise<void>{
-    const result = await this.categoriaRepository.softDelete(id)
-
-    if(result.affected === 0) {
-      throw new NotFoundException(`La categoria con ID ${id} no se encontró`)
-    }
-  }
-
-  async restore(id: number): Promise<void>{
-    const result = await this.categoriaRepository.restore(id)
-
-    if(result.affected === 0){
-      throw new NotFoundException(`La categoria con ID ${id} no se encontró`)
-    }
-  }
-
-  async findSoftDeleted(): Promise<Categoria[]> {
-    return await this.categoriaRepository.find({ 
-      where:{
-        deletedAt: Not(IsNull()), 
-      },
-      withDeleted: true 
-    });
-  }
-
 }

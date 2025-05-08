@@ -12,18 +12,16 @@ export class Producto {
   nombre: string;
 
   @Column({ type: 'varchar', length: 50, unique: true })
-  @Unique(['codigo']) // El código debe ser único
+  @Unique(['codigo'])
   codigo: string;
 
   @Column({ type: 'text', nullable: true })
   descripcion: string;
 
-  // Si categoría es una entidad (clave foránea):
   @ManyToOne(() => Categoria)
   @JoinColumn({ name: 'categoria_id' })
   categoria: Categoria;
 
-  // Si tienes también una relación con Marca:
   @ManyToOne(() => Marca)
   @JoinColumn({ name: 'marca_id' })
   marca: Marca;
@@ -34,5 +32,4 @@ export class Producto {
 
   @DeleteDateColumn()
   deletedAt: Date;
-  
 }

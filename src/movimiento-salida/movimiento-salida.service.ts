@@ -1,73 +1,73 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { CreateMovimientoSalidaDto } from './dto/create-movimiento-salida.dto';
-import { UpdateMovimientoSalidaDto } from './dto/update-movimiento-salida.dto';
 import { InjectRepository } from '@nestjs/typeorm';
+import { In, Repository } from 'typeorm';
 import { MovimientoSalida } from './entities/movimiento-salida.entity';
-import { IsNull, Not, Repository } from 'typeorm';
+import { CreateMovimientoSalidaDto } from './dto/create-movimiento-salida.dto';
+import { ProductoEnStock } from 'src/productos-en-stock/entities/productos-en-stock.entity';
+import { UpdateMovimientoSalidaDto } from './dto/update-movimiento-salida.dto';
 
 @Injectable()
-export class MovimientoSalidaService {
-
- constructor(
+export class MovimientosSalidaService {
+  constructor(
     @InjectRepository(MovimientoSalida)
-    private movimeintoSalidaRepository : Repository<MovimientoSalida>
-  ){}
+    private readonly movimientoSalidaRepository: Repository<MovimientoSalida>,
+    @InjectRepository(ProductoEnStock)
+    private readonly productoEnStockRepository: Repository<ProductoEnStock>,
+  ) {}
 
-  async create(createMovimientoSalidaDto: CreateMovimientoSalidaDto) : Promise<MovimientoSalida> {
-    const movSalida = this.movimeintoSalidaRepository.create(createMovimientoSalidaDto)
-    return await this.movimeintoSalidaRepository.save(movSalida)
-  }
+  async create(createMovimientoSalidaDto: CreateMovimientoSalidaDto): Promise<MovimientoSalida> {
+    const movimientoSalida = this.movimientoSalidaRepository.create({
+      fechaHora: new Date(createMovimientoSalidaDto.fechaHora),
+      total: createMovimientoSalidaDto.total,
+    });
 
-  async findAll() : Promise<MovimientoSalida[]> {
-    return await this.movimeintoSalidaRepository.find()
-  }
+    const savedMovimientoSalida = await this.movimientoSalidaRepository.save(movimientoSalida);
 
-  async findOne(id: number) : Promise<MovimientoSalida> {
-    const movSalida = await this.movimeintoSalidaRepository.findOne({
-            where: {
-              id: id, 
-            },
-          });
-      
-          if(!movSalida){
-            throw new NotFoundException(`El moviendo de salida con ID ${id} no se encontró`);
-          } 
-      
-          return movSalida;
-  }
-
-  async update(id: number, updateMovimientoSalidaDto: UpdateMovimientoSalidaDto) : Promise<MovimientoSalida>  {
-    const movSalida = await this.findOne(id)
-
-    const movSalidaUpdate = this.movimeintoSalidaRepository.merge(movSalida, updateMovimientoSalidaDto)
-    return this.movimeintoSalidaRepository.save(updateMovimientoSalidaDto)
-  }
-
-  async remove(id: number) : Promise<void>{
-    const movSalida = await this.findOne(id)
-
-    const removeCategoria = this.movimeintoSalidaRepository.remove(movSalida)
-  }
-  async softDelete(id: number) : Promise<void>{
-    const result =  await this.movimeintoSalidaRepository.softDelete(id)
-    if(result.affected === 0){
-      throw new NotFoundException(`El moviendo de salida con ID ${id} no se encontró`)
-    }
-  }
-
-  async restore(id:number) : Promise<void>{
-    const result = await this.movimeintoSalidaRepository.restore(id)
-    if(result.affected === 0){
-      throw new NotFoundException(`El moviendo de salida con ID ${id} no se encontró`)
-    }
-  }
-
-  async findSoftDeleted() : Promise<MovimientoSalida[]>{
-    return await this.movimeintoSalidaRepository.find({
+    // Actualizar los productos en stock seleccionados
+    const productoEnStockIds = createMovimientoSalidaDto.productoEnStockIds;
+    const productosEnStock = await this.productoEnStockRepository.find({
       where: {
-        deletedAt: Not(IsNull()),
+        id: In(productoEnStockIds),
       },
-      withDeleted: true
-    })
+      withDeleted: false,
+    });
+
+    if (productosEnStock.length !== productoEnStockIds.length) {
+      throw new NotFoundException('Algunos productos en stock no fueron encontrados');
+    }
+
+    // Asignar la relación y aplicar soft delete
+    for (const productoEnStock of productosEnStock) {
+      productoEnStock.movimientoSalida = savedMovimientoSalida;
+      await this.productoEnStockRepository.softDelete(productoEnStock.id);
+    }
+
+    return savedMovimientoSalida;
+  }
+
+  async findAll(): Promise<MovimientoSalida[]> {
+    return await this.movimientoSalidaRepository.find({ withDeleted: false });
+  }
+
+  async findOne(id: number): Promise<MovimientoSalida> {
+    const movimientoSalida = await this.movimientoSalidaRepository.findOne({
+      where: { id },
+      withDeleted: false,
+    });
+    if (!movimientoSalida) {
+      throw new NotFoundException(`Movimiento de salida con ID ${id} no encontrado`);
+    }
+    return movimientoSalida;
+  }
+
+  async update(id: number, updateMovimientoSalidaDto: UpdateMovimientoSalidaDto): Promise<MovimientoSalida> {
+    const movimientoSalida = await this.findOne(id);
+    Object.assign(movimientoSalida, updateMovimientoSalidaDto);
+    return await this.movimientoSalidaRepository.save(movimientoSalida);
+  }
+
+  async remove(id: number): Promise<void> {
+    const movimientoSalida = await this.findOne(id);
+    await this.movimientoSalidaRepository.softDelete(id);
   }
 }

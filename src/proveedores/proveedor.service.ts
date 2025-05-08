@@ -1,78 +1,45 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { Proveedor } from './entities/proveedor.entity';
 import { CreateProveedorDto } from './dto/create-proveedor.dto';
 import { UpdateProveedorDto } from './dto/update-proveedor.dto';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Proveedor} from './entities/proveedor.entity';
-import { IsNull, Not, Repository } from 'typeorm';
 
 @Injectable()
-export class ProveedorService {
-
+export class ProveedoresService {
   constructor(
-      @InjectRepository(Proveedor)
-      private proveedorRepository : Repository<Proveedor>
-    ){}
+    @InjectRepository(Proveedor)
+    private readonly proveedorRepository: Repository<Proveedor>,
+  ) {}
 
-  async create(createProveedorDto: CreateProveedorDto) : Promise<Proveedor> {
-    const provedores = this.proveedorRepository.create(createProveedorDto)
-    return await this.proveedorRepository.save(provedores)
+  async create(createProveedorDto: CreateProveedorDto): Promise<Proveedor> {
+    const proveedor = this.proveedorRepository.create(createProveedorDto);
+    return await this.proveedorRepository.save(proveedor);
   }
 
-  async findAll() : Promise<Proveedor[]> {
-        return await this.proveedorRepository.find();
-      }
+  async findAll(): Promise<Proveedor[]> {
+    return await this.proveedorRepository.find({ withDeleted: false });
+  }
 
   async findOne(id: number): Promise<Proveedor> {
-    const proveedores = await this.proveedorRepository.findOne({
-      where: {
-        id: id,
-      },
+    const proveedor = await this.proveedorRepository.findOne({
+      where: { id },
+      withDeleted: false,
     });
-
-    if(!proveedores){
-      throw new NotFoundException (`El Proveedor con ID ${id} no se encontró`);
+    if (!proveedor) {
+      throw new NotFoundException(`Proveedor con ID ${id} no encontrado`);
     }
-
-    return proveedores
+    return proveedor;
   }
 
-  async update(id: number, updateProveedorDto: UpdateProveedorDto):Promise<Proveedor> {
-    const proveedores = await this.findOne(id)
-
-    const upadteProveedores = this.proveedorRepository.merge(proveedores,updateProveedorDto) 
-    return await this.proveedorRepository.save(upadteProveedores);
+  async update(id: number, updateProveedorDto: UpdateProveedorDto): Promise<Proveedor> {
+    const proveedor = await this.findOne(id);
+    Object.assign(proveedor, updateProveedorDto);
+    return await this.proveedorRepository.save(proveedor);
   }
 
-  async remove(id: number): Promise<void>{
-    const result = await this.proveedorRepository.delete(id);
-    if (result.affected === 0) {
-        throw new NotFoundException(`El Proveedor con ID ${id} no se encontró`);
-    }
+  async remove(id: number): Promise<void> {
+    const proveedor = await this.findOne(id);
+    await this.proveedorRepository.softDelete(id);
   }
-
-  async softDelete(id : number): Promise<void>{
-    const result = await this.proveedorRepository.softDelete(id)
-
-    if(result.affected === 0){
-      throw new NotFoundException(`El Proveedor con ID ${id} no se encontró`)
-    }
-  }
-
-  async restore(id : number) : Promise<void>{
-    const result = await this.proveedorRepository.restore(id)
-    if(result.affected === 0){
-      throw new NotFoundException(`El Proveedor con ID ${id} no se encontró`)
-    }
-  }
-
-  async findSoftDeleted() : Promise<Proveedor[]>{
-    return await this.proveedorRepository.find({
-          where: {
-            deletedAt: Not(IsNull()),
-          },
-          withDeleted: true
-        })
-      }
-  }
-
-
+}

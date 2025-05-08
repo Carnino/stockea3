@@ -1,4 +1,3 @@
-
 import { IsNumber, IsOptional, IsDateString } from 'class-validator';
 
 export class UpdateProductoEnStockDto {

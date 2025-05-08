@@ -1,4 +1,3 @@
-
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, DeleteDateColumn } from 'typeorm';
 import { Producto } from 'src/productos/entities/producto.entity';
 import { MovimientoSalida } from 'src/movimiento-salida/entities/movimiento-salida.entity';
@@ -28,4 +27,3 @@ export class ProductoEnStock {
   @DeleteDateColumn()
   deletedAt: Date;
 }
-

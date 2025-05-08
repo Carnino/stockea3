@@ -1,12 +1,16 @@
-import { IsNotEmpty, IsOptional, IsString } from "class-validator";
+import { IsDateString, IsNotEmpty, IsNumber, IsArray, ArrayNotEmpty } from 'class-validator';
 
 export class CreateMovimientoSalidaDto {
-    
-    @IsString()
-    @IsNotEmpty()
-    nombre: string;
+  @IsDateString()
+  @IsNotEmpty()
+  fechaHora: string;
 
-    @IsString()
-    @IsOptional()
-    descripcion?: string;
+  @IsNumber()
+  @IsNotEmpty()
+  total: number;
+
+  @IsArray()
+  @ArrayNotEmpty()
+  @IsNumber({}, { each: true })
+  productoEnStockIds: number[];
 }
