@@ -35,7 +35,7 @@ export class ProveedorController {
     }
   }
 
-  @Get(':id')
+  @Get('/findOne/:id')
   async findOne(@Param('id', ParseIntPipe) id: number) : Promise<Proveedor> {
      try {
       return await this.proveedorService.findOne(id);
