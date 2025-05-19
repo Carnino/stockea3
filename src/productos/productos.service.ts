@@ -81,11 +81,26 @@ export class ProductosService {
     return await this.productoRepository.save(updatedProducto);
   }
 
-  async updateStock({ id, stock }) {
+  async updateStock({ id, stock, tipoMovimiento, costoMovimiento}) {
+
+    //0 ingreso
+    //1 egreso o salida
 
     const producto = await this.findOne(id);
+    let nuevoStock:number
 
-    const nuevoStock = producto.stock + stock;
+    if(tipoMovimiento === 0 && costoMovimiento > 0){
+      nuevoStock = producto.stock + stock;
+    }
+    else if(tipoMovimiento === 1){
+      nuevoStock = producto.stock - stock;
+      if(nuevoStock <= 0 ){
+        throw new BadRequestException('No hay unidades suficientes para el egreso pedido')
+      }
+    }
+    else{
+      throw new BadRequestException('Tipo de movimiento debe ser 0 o 1. Costo en ingreso no debe ser nulo')
+    }
 
     await this.productoRepository.update({ id }, { stock: nuevoStock });
 
