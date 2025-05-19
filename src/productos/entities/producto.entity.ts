@@ -34,5 +34,8 @@ export class Producto {
 
   @DeleteDateColumn()
   deletedAt: Date;
+
+  @Column({ type:'int', nullable: true})
+  stock: number;
   
 }

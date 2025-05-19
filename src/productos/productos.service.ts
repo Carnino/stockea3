@@ -67,28 +67,31 @@ export class ProductosService {
     return producto;
   }
 
-  /* async update(id: number, updateProductoDto: UpdateProductoDto): Promise<Producto> {
-    try {
-    const producto = await this.findOne(id); 
+  async update(id: number, updateProductoDto: UpdateProductoDto): Promise<Producto> {
+    const producto = await this.findOne(id);
 
-    const updatedProducto =  this.productoRepository.merge(producto, updateProductoDto);
+    // Filtramos solo las propiedades definidas en el DTO
+    const camposActualizables: Partial<Producto> = {
+      nombre: updateProductoDto.nombre ?? producto.nombre,
+      codigo: updateProductoDto.codigo ?? producto.codigo,
+      descripcion: updateProductoDto.descripcion ?? producto.descripcion,
+    };
 
+    const updatedProducto = this.productoRepository.merge(producto, camposActualizables);
     return await this.productoRepository.save(updatedProducto);
+  }
 
-    } catch (e) {
-      // Loguear el error para depuración
-      console.error('Error al actualizar el producto:', e);
+  async updateStock({ id, stock }) {
 
-      // Ejemplo de manejo de error de base de datos
-      if (e instanceof QueryFailedError && e.driverError?.code === '23503') { // Código foreign_key_violation en PostgreSQL
-        console.log(e)
-        throw new ConflictException('Marca, categoria o proveedor no es correcta');
-        
-      }
-      throw new InternalServerErrorException('Error interno al intentar actualizar el producto.');
-    }
-    
-  } */
+    const producto = await this.findOne(id);
+
+    const nuevoStock = producto.stock + stock;
+
+    await this.productoRepository.update({ id }, { stock: nuevoStock });
+
+  }
+
+
 
   async remove(id: number): Promise<void> {
     const result = await this.productoRepository.delete(id)

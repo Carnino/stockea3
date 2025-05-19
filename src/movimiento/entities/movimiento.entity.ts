@@ -23,7 +23,7 @@ export class Movimiento {
     @Column({ type: 'int'})
     cantidad:number
 
-    @Column({type: 'bytea'})
-    tipoMovimiento: Binary
+    @Column({type: 'int'})
+    tipoMovimiento: number //deberia ser un enum.
     
 }
