@@ -94,7 +94,7 @@ export class ProductosService {
     }
     else if(tipoMovimiento === 1){
       nuevoStock = producto.stock - stock;
-      if(nuevoStock <= 0 ){
+      if(nuevoStock < 0 ){
         throw new BadRequestException('No hay unidades suficientes para el egreso pedido')
       }
     }
