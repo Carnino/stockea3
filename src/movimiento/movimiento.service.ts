@@ -19,9 +19,11 @@
       
       const idProducto = movimiento.producto
       const ingresoStock = movimiento.cantidad
+      const tipoMovimiento = movimiento.tipoMovimiento
+      const costoMovimiento = movimiento.costo
 
       //ActualizoStock
-      await this.productoService.updateStock({ id: idProducto, stock: ingresoStock });
+      await this.productoService.updateStock({ id: idProducto, stock: ingresoStock, tipoMovimiento: tipoMovimiento, costoMovimiento:costoMovimiento});
     
       return await this.movimientoRepository.save(movimiento)
     }

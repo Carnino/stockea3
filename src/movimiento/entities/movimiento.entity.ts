@@ -13,7 +13,7 @@ export class Movimiento {
     @Column({ type:'timestamp', default: () => 'CURRENT_TIMESTAMP' })
     fecha:Date;
 
-    @Column( { type:'double precision' } ) 
+    @Column( { type:'double precision', nullable:true } ) 
     costo:number
 
     @ManyToOne(() => Producto)
