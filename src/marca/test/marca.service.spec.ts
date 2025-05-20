@@ -3,6 +3,8 @@ import { Test, TestingModule } from "@nestjs/testing";
 import { MarcaService } from "../marca.service";
 import { getRepositoryToken } from "@nestjs/typeorm";
 import { get } from "http";
+import { UpdateCategoriaDto } from "src/categorias/dto/update-categoria.dto";
+import { Repository } from "typeorm";
 
 const mockMarcaRepository = () => ({
   create: jest.fn(),
@@ -61,4 +63,30 @@ describe ('MarcaService', () => {
         });
     });
 
+    describe('update', () => {
+        it('Deberia actualizar una marca existente y devolverla', async () => {
+            // Simular una marca existente en la base de datos
+            const marcaExistente : Marca = { id: 1, nombre: 'marca1', descripcion: 'descripcion1', deletedAt:new Date() };
+            // Simular el DTO de actualización
+            const marcaActualizadaDto : UpdateCategoriaDto = { id: 1, nombre: 'marcaActualizada', descripcion: 'descripcionActualizada'};
+            // Simular la marca actualizada que se espera devolver
+            const marcaActualizada : Marca = { ...marcaExistente, ...marcaActualizadaDto };
+
+            // Mockear el comportamiento de 'findOne' para que devuelva la marca existente
+            (marcaRepository.findOne as jest.Mock).mockResolvedValue(marcaExistente);
+            // Mockear el comportamiento de 'merge' para que devuelva la marca actualizada
+            (marcaRepository.merge as jest.Mock).mockReturnValue(marcaActualizada);
+            // Mockear el comportamiento de 'save' para que devuelva la marca actualizada
+            (marcaRepository.save as jest.Mock).mockResolvedValue(marcaActualizada);
+            // Llamar al método 'update' del servicio
+            const resultado = await service.update(marcaActualizadaDto.id, marcaActualizadaDto);
+            // Verificar que se hayan llamado a los métodos 'findOne', 'merge' y 'save' del repositorio con los argumentos correctos.
+            expect(marcaRepository.findOne).toHaveBeenCalledWith({ where: { id: marcaActualizadaDto.id } });
+            expect(marcaRepository.merge).toHaveBeenCalledWith(marcaExistente, marcaActualizadaDto);
+            expect(marcaRepository.save).toHaveBeenCalledWith(marcaActualizada);
+            // Verificar que el resultado sea la marca actualizada
+            expect(resultado).toEqual(marcaActualizada);
+
+        });
+    });
 });
