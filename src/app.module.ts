@@ -18,7 +18,7 @@ import { MovimientoModule } from './movimiento/movimiento.module';
     database: 'stockea3',
     entities: [__dirname+'/**/*.entity.{ts,js}'],
     synchronize: true, //SE USA SOLO EN DESARROLLO
-    dropSchema: false
+    dropSchema: true
   }),ProductosModule, ProveedorModule, CategoriasModule, MarcaModule, MovimientoModule],
   controllers: [AppController],
   providers: [AppService],
