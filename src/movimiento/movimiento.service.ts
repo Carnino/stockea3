@@ -30,7 +30,7 @@
 
     async findAll():Promise<Movimiento[]> {
       return await this.movimientoRepository.find({
-        relations: ['producto'],
+        relations: ['producto', 'producto.proveedor', 'producto.categoria'],
         loadEagerRelations: false, // Importante para evitar duplicados si tienes EAGER en las entidades
         join: {
           alias: 'movimiento',
