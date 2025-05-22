@@ -30,8 +30,18 @@
 
     async findAll():Promise<Movimiento[]> {
       return await this.movimientoRepository.find({
-        relations: ['producto'],
-      })
+        relations: ['producto', 'producto.proveedor', 'producto.categoria'],
+        loadEagerRelations: false, // Importante para evitar duplicados si tienes EAGER en las entidades
+        join: {
+          alias: 'movimiento',
+          leftJoinAndSelect: {
+            producto: 'movimiento.producto',
+          },
+    },
+    where: {}, // Puedes agregar otras condiciones aquí si es necesario
+    withDeleted: true, // Esto aplicaría a la entidad movimiento en sí, si también tiene soft delete
+    relationLoadStrategy: 'query', // Recomendado para mejor rendimiento en casos con muchas relaciones
+      });
     }
 
     /* findOne(id: number) {
