@@ -13,6 +13,6 @@ export class Marca {
     descripcion: string;
 
     @DeleteDateColumn()
-    deletedAt: Date; // Esta es la columna clave para el soft delete
+    deletedAt: Date | null; // Esta es la columna clave para el soft delete
 }
 
