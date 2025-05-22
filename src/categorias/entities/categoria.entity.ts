@@ -16,5 +16,5 @@ export class Categoria {
     imagen: string;
 
     @DeleteDateColumn()
-    deletedAt: Date; 
+    deletedAt: Date | null; 
 }

@@ -18,5 +18,5 @@ export class Proveedor {
     cuit: number;
 
     @DeleteDateColumn()
-    deletedAt: Date; 
+    deletedAt: Date | null; 
 }
