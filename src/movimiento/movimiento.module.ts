@@ -3,7 +3,7 @@ import { MovimientoService } from './movimiento.service';
 import { MovimientoController } from './movimiento.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Movimiento } from './entities/movimiento.entity';
-import { ProductosModule } from 'src/productos/productos.module';
+import { ProductosModule } from '../productos/productos.module';
 
 @Module({
   imports: [

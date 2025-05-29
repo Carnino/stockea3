@@ -4,8 +4,8 @@
   import { InjectRepository } from '@nestjs/typeorm';
   import { Repository } from 'typeorm';
   import { Movimiento } from './entities/movimiento.entity';
-  import { ProductosService } from 'src/productos/productos.service';
-import { Producto } from 'src/productos/entities/producto.entity';
+  import { ProductosService } from '../productos/productos.service';
+import { Producto } from '../productos/entities/producto.entity';
   @Injectable()
   export class MovimientoService {
     constructor(

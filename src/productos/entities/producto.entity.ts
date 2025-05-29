@@ -1,6 +1,6 @@
-import { Categoria } from 'src/categorias/entities/categoria.entity';
-import { Marca } from 'src/marca/entities/marca.entity';
-import { Proveedor } from 'src/proveedores/entities/proveedor.entity';
+import { Categoria } from '../../categorias/entities/categoria.entity';
+import { Marca } from '../../marca/entities/marca.entity';
+import { Proveedor } from '../../proveedores/entities/proveedor.entity';
 import { Entity, PrimaryGeneratedColumn, Column, Unique, ManyToOne, JoinColumn, DeleteDateColumn } from 'typeorm';
 
 @Entity('producto')
@@ -33,7 +33,7 @@ export class Producto {
   proveedor: Proveedor;
 
   @DeleteDateColumn()
-  deletedAt: Date;
+  deletedAt: Date | null;
 
   @Column({ type:'int', nullable: true})
   stock: number;

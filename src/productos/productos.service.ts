@@ -4,9 +4,9 @@ import { IsNull, Not, QueryFailedError, Repository } from 'typeorm';
 import { Producto } from './entities/producto.entity';
 import { CreateProductoDto } from './dto/create-producto.dto';
 import { UpdateProductoDto } from './dto/update-producto.dto';
-import { Categoria } from 'src/categorias/entities/categoria.entity';
-import { Marca } from 'src/marca/entities/marca.entity';
-import { Proveedor } from 'src/proveedores/entities/proveedor.entity';
+import { Categoria } from '../categorias/entities/categoria.entity';
+import { Marca } from '../marca/entities/marca.entity';
+import { Proveedor } from '../proveedores/entities/proveedor.entity';
 
 @Injectable()
 export class ProductosService {
