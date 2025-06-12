@@ -34,7 +34,7 @@ $ npm install
 ## Compile and run the project
 
 ```bash
-# development
+# developmentj
 $ npm run start
 
 # watch mode
