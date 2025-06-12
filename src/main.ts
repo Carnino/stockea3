@@ -17,7 +17,7 @@ async function bootstrap() {
 
   try {
     // Intenta crear la base de datos antes de iniciar la aplicación
-    await pgtools.createdb(configdb, configdb.database);
+    //await pgtools.createdb(configdb, configdb.database);
     console.log(`✅ Base de datos '${configdb.database}' creada exitosamente.`);
   } catch (err) {
     if (err.name === 'duplicate_database') {
