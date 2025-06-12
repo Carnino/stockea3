@@ -10,18 +10,9 @@ import { MovimientoModule } from './movimiento/movimiento.module';
 
 @Module({
   imports: [TypeOrmModule.forRoot({
-/*     type: 'postgres',
-    host: 'localhost',
-    port: 5432,
-    username: 'postgres',
-    password: 'postgres',
-    database: 'stockea3', */
-    //entities: [__dirname+'/**/*.entity.{ts,js}'],
-    //synchronize: true, //SE USA SOLO EN DESARROLLO
-    //dropSchema: false
     type: 'postgres',
     host: process.env.PGHOST,
-    port: parseInt(process.env.PGPORT || '5432', 10),
+    port: process.env.PGPORT ? parseInt(process.env.PGPORT, 10) : 5432, 
     username: process.env.PGUSER,
     password: process.env.PGPASSWORD,
     database: process.env.PGDATABASE,
