@@ -9,7 +9,7 @@ import { MarcaModule } from './marca/marca.module';
 import { MovimientoModule } from './movimiento/movimiento.module';
 
 @Module({
-  imports: [TypeOrmModule .forRoot({
+  imports: [TypeOrmModule.forRoot({
 /*     type: 'postgres',
     host: 'localhost',
     port: 5432,
