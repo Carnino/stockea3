@@ -2,31 +2,8 @@ import { NestFactory } from '@nestjs/core';
 import { ValidationPipe } from '@nestjs/common';
 import { AppModule } from './app.module';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
-import * as pgtools from 'pgtools';
 
 async function bootstrap() {
-  const configdb = {
-    user: 'postgres',
-    host: 'localhost',
-    password: 'postgres', // Asegúrate de usar la contraseña correcta
-    port: 5432,
-  };
-
-  const dbName = 'stockea3';
-
-  try {
-    // Intenta crear la base de datos antes de iniciar la aplicación
-    await pgtools.createdb(configdb, dbName);
-    console.log(`✅ Base de datos '${dbName}' creada exitosamente.`);
-  } catch (err) {
-    if (err.name === 'duplicate_database') {
-      console.log(`⚠️ La base de datos '${dbName}' ya existe.`);
-    } else {
-      console.error('❌ Error al crear la base de datos:', err);
-      process.exit(1); // Detener la aplicación si no se puede crear la DB
-    }
-  }
-
   // Iniciar la aplicación NestJS
   const app = await NestFactory.create(AppModule);
 
@@ -46,13 +23,15 @@ async function bootstrap() {
 
   // Habilitar CORS global
   app.enableCors({
-    origin: '*',
+    origin: process.env.ALLOWED_ORIGINS || '*', // Usa variable de entorno para orígenes permitidos
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     allowedHeaders: 'Content-Type, Accept, Authorization',
   });
 
-  await app.listen(4000);
-  console.log(`🚀 Servidor corriendo en http://localhost:4000`);
+  // Escuchar en el puerto proporcionado por Render o 4000 en desarrollo
+  const port = process.env.PORT || 4000;
+  await app.listen(port);
+  console.log(`🚀 Servidor corriendo en http://localhost:${port}`);
 }
 
 bootstrap();

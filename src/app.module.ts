@@ -7,19 +7,34 @@ import { CategoriasModule } from './categorias/categorias.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { MarcaModule } from './marca/marca.module';
 import { MovimientoModule } from './movimiento/movimiento.module';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 
 @Module({
-  imports: [TypeOrmModule .forRoot({
-    type: 'postgres',
-    host: 'localhost',
-    port: 5432,
-    username: 'postgres',
-    password: 'postgres',
-    database: 'stockea3',
-    entities: [__dirname+'/**/*.entity.{ts,js}'],
-    synchronize: true, //SE USA SOLO EN DESARROLLO
-    dropSchema: false
-  }),ProductosModule, ProveedorModule, CategoriasModule, MarcaModule, MovimientoModule],
+  imports: [
+    ConfigModule.forRoot({
+      isGlobal: true, // Hace que las variables de entorno estén disponibles globalmente
+    }),
+    TypeOrmModule.forRootAsync({
+      imports: [ConfigModule],
+      useFactory: (configService: ConfigService) => ({
+        type: 'postgres',
+        host: configService.get<string>('DATABASE_HOST'),
+        port: configService.get<number>('DATABASE_PORT'),
+        username: configService.get<string>('DATABASE_USER'),
+        password: configService.get<string>('DATABASE_PASSWORD'),
+        database: configService.get<string>('DATABASE_NAME'),
+        entities: [__dirname + '/**/*.entity.{ts,js}'],
+        synchronize: configService.get<boolean>('DATABASE_SYNCHRONIZE', false), // Por defecto false en producción
+        dropSchema: false,
+      }),
+      inject: [ConfigService],
+    }),
+    ProductosModule,
+    ProveedorModule,
+    CategoriasModule,
+    MarcaModule,
+    MovimientoModule,
+  ],
   controllers: [AppController],
   providers: [AppService],
 })
