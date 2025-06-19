@@ -48,23 +48,15 @@ export class ProductosService {
     }  
   }
 
-async findAll(): Promise<Producto[]> {
-  return await this.productoRepository.find({
-    relations: ['categoria', 'marca', 'proveedor'],
-    loadEagerRelations: false, // Importante para evitar duplicados si tienes EAGER en las entidades
-    join: {
-      alias: 'producto',
-      leftJoinAndSelect: {
-        categoria: 'producto.categoria',
-        marca: 'producto.marca',
-        proveedor: 'producto.proveedor',
-      },
-    },
-    where: {}, // Puedes agregar otras condiciones aquí si es necesario
-    withDeleted: true, // Esto aplicaría a la entidad Producto en sí, si también tiene soft delete
-    relationLoadStrategy: 'query', // Recomendado para mejor rendimiento en casos con muchas relaciones
-  });
-}
+  async findAll(): Promise<Producto[]> {
+    return await this.productoRepository.find({
+      relations: ['categoria', 'marca', 'proveedor'],
+      withDeleted: true,
+      loadEagerRelations: false,
+      relationLoadStrategy: 'query',
+    });
+  }
+  
 
   async findOne(id: number): Promise<Producto> {
     const producto = await this.productoRepository.findOne({ 
