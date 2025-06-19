@@ -3,30 +3,32 @@ import { ValidationPipe } from '@nestjs/common';
 import { AppModule } from './app.module';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import * as pgtools from 'pgtools';
-import * as dotenv from 'dotenv'; // Importa dotenv
+import * as dotenv from 'dotenv';
 
 async function bootstrap() {
   dotenv.config(); // Carga las variables de entorno desde .env
 
   const configdb = {
-    user: process.env.DATABASE_USER ?? 'postgres', // Valor por defecto si es undefined
+    user: process.env.DATABASE_USER ?? 'postgres',
     host: process.env.DATABASE_HOST ?? 'localhost',
     password: process.env.DATABASE_PASSWORD ?? 'postgres',
-    port: parseInt(process.env.DATABASE_PORT ?? '5432', 10), // Convierte a número con valor por defecto
+    port: parseInt(process.env.DATABASE_PORT ?? '5432', 10),
   };
 
-  const dbName = process.env.DATABASE_NAME ?? 'stockea3'; // Valor por defecto si es undefined
+  const dbName = process.env.DATABASE_NAME ?? 'stockea3';
 
-  try {
-    // Intenta crear la base de datos antes de iniciar la aplicación
-    await pgtools.createdb(configdb, dbName);
-    console.log(`✅ Base de datos '${dbName}' creada exitosamente.`);
-  } catch (err) {
-    if (err.name === 'duplicate_database') {
-      console.log(`⚠️ La base de datos '${dbName}' ya existe.`);
-    } else {
-      console.error('❌ Error al crear la base de datos:', err);
-      process.exit(1); // Detener la aplicación si no se puede crear la DB
+  // Solo intenta crear la base de datos en desarrollo local
+  if (process.env.NODE_ENV !== 'production') {
+    try {
+      await pgtools.createdb(configdb, dbName);
+      console.log(`✅ Base de datos '${dbName}' creada exitosamente.`);
+    } catch (err) {
+      if (err.name === 'duplicate_database') {
+        console.log(`⚠️ La base de datos '${dbName}' ya existe.`);
+      } else {
+        console.error('❌ Error al crear la base de datos:', err);
+        process.exit(1);
+      }
     }
   }
 
