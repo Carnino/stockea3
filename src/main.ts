@@ -7,21 +7,19 @@ async function bootstrap() {
   // Iniciar la aplicación NestJS
   const app = await NestFactory.create(AppModule);
 
-  // Configurar Swagger para la documentación de la API
+  // Configurar Swagger
   const config = new DocumentBuilder()
     .setTitle('📦 Stockea3 - API')
-    .setDescription(
-      'Documentación de la API de Stockea3, incluyendo endpoints, parámetros y respuestas.',
-    )
+    .setDescription('Documentación de la API de Stockea3.')
     .setVersion('1.0')
     .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);
 
-  // Habilitar validaciones globales
+  // Validaciones globales
   app.useGlobalPipes(new ValidationPipe());
 
-  // Habilitar CORS global
+  // CORS
   app.enableCors({
     origin: process.env.ALLOWED_ORIGINS || '*', // Usa variable de entorno para orígenes permitidos
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
