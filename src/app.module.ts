@@ -24,11 +24,11 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
         password: configService.get<string>('DATABASE_PASSWORD'),
         database: configService.get<string>('DATABASE_NAME'),
         entities: [__dirname + '/**/*.entity.{ts,js}'],
-        synchronize: configService.get<boolean>('DATABASE_SYNCHRONIZE', false), // Desactivado en producción
+        synchronize: configService.get<boolean>('DATABASE_SYNCHRONIZE', false),
         dropSchema: false,
-        ssl: { rejectUnauthorized: false }, // Necesario para Render
-        migrations: [__dirname + '/migrations/*.{ts,js}'], // Soporte para migraciones
-        migrationsRun: true, // Ejecuta migraciones automáticamente al iniciar
+        ssl: configService.get<string>('NODE_ENV') === 'production' ? { rejectUnauthorized: false } : false, // SSL solo en producción
+        migrations: [__dirname + '/migrations/*.{ts,js}'],
+        migrationsRun: true,
       }),
       inject: [ConfigService],
     }),
