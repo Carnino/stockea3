@@ -9,17 +9,20 @@ import { MarcaModule } from './marca/marca.module';
 import { MovimientoModule } from './movimiento/movimiento.module';
 
 @Module({
-  imports: [TypeOrmModule .forRoot({
-    type: 'postgres',
-    host: 'localhost',
-    port: 5432,
-    username: 'postgres',
-    password: 'postgres',
-    database: 'stockea3',
-    entities: [__dirname+'/**/*.entity.{ts,js}'],
-    synchronize: false, //SE USA SOLO EN DESARROLLO
-    dropSchema: false
-  }),ProductosModule, ProveedorModule, CategoriasModule, MarcaModule, MovimientoModule],
+  imports: [
+    TypeOrmModule.forRoot({
+      type: 'postgres',
+      url: process.env.DATABASE_URL || 'postgres://postgres:postgres@localhost:5432/stockea3', // Fallback para desarrollo local
+      entities: [__dirname + '/**/*.entity.{ts,js}'],
+      synchronize: false, // Solo para desarrollo, desactiva en producción
+      dropSchema: false,
+    }),
+    ProductosModule,
+    ProveedorModule,
+    CategoriasModule,
+    MarcaModule,
+    MovimientoModule,
+  ],
   controllers: [AppController],
   providers: [AppService],
 })
