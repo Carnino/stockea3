@@ -3,16 +3,19 @@ import { ValidationPipe } from '@nestjs/common';
 import { AppModule } from './app.module';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import * as pgtools from 'pgtools';
+import * as dotenv from 'dotenv'; // Importa dotenv
 
 async function bootstrap() {
+  dotenv.config(); // Carga las variables de entorno desde .env
+
   const configdb = {
-    user: 'postgres',
-    host: 'localhost',
-    password: 'postgres', // Asegúrate de usar la contraseña correcta
-    port: 5432,
+    user: process.env.DATABASE_USER ?? 'postgres', // Valor por defecto si es undefined
+    host: process.env.DATABASE_HOST ?? 'localhost',
+    password: process.env.DATABASE_PASSWORD ?? 'postgres',
+    port: parseInt(process.env.DATABASE_PORT ?? '5432', 10), // Convierte a número con valor por defecto
   };
 
-  const dbName = 'stockea3';
+  const dbName = process.env.DATABASE_NAME ?? 'stockea3'; // Valor por defecto si es undefined
 
   try {
     // Intenta crear la base de datos antes de iniciar la aplicación
@@ -51,8 +54,10 @@ async function bootstrap() {
     allowedHeaders: 'Content-Type, Accept, Authorization',
   });
 
-  await app.listen(4000);
-  console.log(`🚀 Servidor corriendo en http://localhost:4000`);
+  // Usar puerto dinámico para Render
+  const port = process.env.PORT ? parseInt(process.env.PORT, 10) : 4000;
+  await app.listen(port);
+  console.log(`🚀 Servidor corriendo en http://localhost:${port}`);
 }
 
 bootstrap();

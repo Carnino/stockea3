@@ -17,7 +17,7 @@ import { MovimientoModule } from './movimiento/movimiento.module';
     password: 'postgres',
     database: 'stockea3',
     entities: [__dirname+'/**/*.entity.{ts,js}'],
-    synchronize: true, //SE USA SOLO EN DESARROLLO
+    synchronize: false, //SE USA SOLO EN DESARROLLO
     dropSchema: false
   }),ProductosModule, ProveedorModule, CategoriasModule, MarcaModule, MovimientoModule],
   controllers: [AppController],
