@@ -4,9 +4,9 @@ import { ProductosService } from '../productos.service';
 import { CreateProductoDto } from '../dto/create-producto.dto';
 import { Producto } from '../entities/producto.entity';
 import { HttpException, HttpStatus } from '@nestjs/common';
-import { Categoria } from 'src/categorias/entities/categoria.entity';
-import { Marca } from 'src/marca/entities/marca.entity';
-import { Proveedor } from 'src/proveedores/entities/proveedor.entity';
+import { Categoria } from '../../categorias/entities/categoria.entity';
+import { Marca } from '../../marca/entities/marca.entity';
+import { Proveedor } from '../../proveedores/entities/proveedor.entity';
 
 
 // Mock del ProductosService
